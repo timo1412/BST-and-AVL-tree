@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using SemestralnaPracaAUS2.Structures;
+using SemestralnaPracaAUS2.TestData;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,10 +24,14 @@ namespace SemestralnaPracaAUS2
         }
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
-            // Sem daj, čo sa má vykonať po kliknutí
+            var tree = new BST<Person>();
+            for (int i = 0; i < 10; i++)
+            {
+                var person = new Person(name: "John", seccondName: "Doe");
+                bool added = tree.Add(person);
+                Console.WriteLine($"Add #{i + 1}: {person} -> {(added ? "OK" : "DUPLICATE")}");
+            }
             MessageBox.Show("Test tlačidlo kliknuté!");
-            // napr. spustiť výpočet, otvoriť okno, zavolať službu, atď.
         }
-
     }
 }
