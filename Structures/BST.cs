@@ -10,7 +10,7 @@ namespace SemestralnaPracaAUS2.Structures
     public class BST<T> where T : IMyComparable<T>
     {
         private BSTNode? root;
-        private int count;
+        public int count;
 
         public BST()
         {
@@ -25,6 +25,7 @@ namespace SemestralnaPracaAUS2.Structures
             if (root == null)
             {
                 root = new BSTNode(value, parent: null);
+                count++;
                 return true;
             }
 
@@ -54,13 +55,34 @@ namespace SemestralnaPracaAUS2.Structures
                 parent.Left = newNode;
             else
                 parent.Right = newNode;
+
             count++;
             return true;
 
         }
 
-        public bool Find(T value) 
+        public bool Find(T value, out T found) 
         {
+            var current  = root;
+            while (current != null) 
+            { 
+                int cmp = Compare(value, current.Value);
+
+                if (cmp == 0)
+                {
+                    found = current.Value;
+                    return true;
+                }
+                else if (cmp < 0)
+                {
+                    current = current.Left;
+                }
+                else 
+                {
+                    current = current.Right;
+                }
+            }
+            found = default;
             return false;
         }
 
