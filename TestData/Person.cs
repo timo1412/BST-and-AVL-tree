@@ -20,6 +20,12 @@ namespace SemestralnaPracaAUS2.TestData
             SeccondName = seccondName;
             Weight = Math.Round(rnd.NextDouble() * 100.0, 2, MidpointRounding.AwayFromZero);
         }
+        public Person(string name, string seccondName, double weight)
+        {
+            Name = name;
+            SeccondName = seccondName;
+            Weight = weight;
+        }
         public int CompareTo(Person other)
         {
             if (other is null) return 1;
