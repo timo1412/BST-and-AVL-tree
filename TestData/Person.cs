@@ -13,7 +13,6 @@ namespace SemestralnaPracaAUS2.TestData
         public string Name { get; }
         public string SeccondName { get; }   
         public double Weight { get; }
-
         public Person(string name, string seccondName)
         {
             Name = name;

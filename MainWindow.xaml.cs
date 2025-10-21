@@ -1,7 +1,9 @@
 ﻿using SemestralnaPracaAUS2.Structures;
 using SemestralnaPracaAUS2.TestData;
+using SemestralnaPracaAUS2.Tester;
 using System;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,25 +29,29 @@ namespace SemestralnaPracaAUS2
         }
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
-            TestBST();
-            var tree = new BST<Person>();
-            tree.Add(new Person("first", "last", 8));
-            tree.Add(new Person("first", "last", 4));
-            tree.Add(new Person("first", "last", 12));
-            tree.Add(new Person("first", "last", 15));
-            var list = tree.LevelOrderList();
+            var bst = new BST<Person>();
+            Debug.WriteLine("BST report:\n" + StructurePerfTester.Run(bst));
+
+            var avl = new AVLTree<Person>();
+            Debug.WriteLine("AVL report:\n" + StructurePerfTester.Run(avl));
+            Debug.WriteLine("KONIEC");
+        }
+
+
+        private void  AVLTest() 
+        {
+            var avl = new AVLTree<Person>();
+            avl.Add(new Person("first", "last", 50));
+            avl.Add(new Person("first", "last", 30));
+            avl.Add(new Person("first", "last", 70));
+            avl.Add(new Person("first", "last", 20));
+            avl.Add(new Person("first", "last", 40));
+            avl.Add(new Person("first", "last", 10));
+            var list = avl.LevelOrderList();
             foreach (var item in list) 
             {
                 Debug.WriteLine(item.Weight);
             }
-            tree.Delete(new Person("first", "last", 8));
-            var listDel = tree.LevelOrderList();
-            Debug.WriteLine("================================");
-            foreach (var item in listDel)
-            {
-                Debug.WriteLine(item.Weight);
-            }
-            Debug.WriteLine("================================");
         }
 
         private void TestBST() 

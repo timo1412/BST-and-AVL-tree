@@ -10,28 +10,28 @@ namespace SemestralnaPracaAUS2.Structures
 {
     public class BST<T> where T : IMyComparable<T>
     {
-        private BSTNode? root;
+        protected Node? root;
         public int count;
-
         public BST()
         {
             root = null;
             count = 0;
         }
-        public bool Add(T value) 
+        protected virtual Node NewNode(T value, Node? parent) => new Node(value, parent);
+        public virtual bool Add(T value) 
         {
             if (value == null)
                 throw new System.ArgumentNullException(nameof(value));
 
             if (root == null)
             {
-                root = new BSTNode(value, parent: null);
+                root = new Node(value, parent: null);
                 count++;
                 return true;
             }
 
             var current = root;
-            BSTNode? parent = null;
+            Node? parent = null;
             while (current != null) 
             {
                 parent = current;
@@ -51,7 +51,7 @@ namespace SemestralnaPracaAUS2.Structures
                 }
             }
 
-            var newNode = new BSTNode(value, parent);
+            var newNode = new Node(value, parent);
             if (Compare(value, parent!.Value) < 0)
                 parent.Left = newNode;
             else
@@ -61,8 +61,7 @@ namespace SemestralnaPracaAUS2.Structures
             return true;
 
         }
-
-        public bool Find(T value, out T found) 
+        public virtual bool Find(T value, out T found) 
         {
             var current  = root;
             while (current != null) 
@@ -86,8 +85,7 @@ namespace SemestralnaPracaAUS2.Structures
             found = default;
             return false;
         }
-
-        public bool Delete(T value) 
+        public virtual bool Delete(T value) 
         {
             var node = FindNode(value);
             if (node == null) return false;
@@ -128,12 +126,78 @@ namespace SemestralnaPracaAUS2.Structures
                 return true;
             }
         }
+        public virtual bool FindMin(out T found)
+        {
+            if (root == null)
+            {
+                found = default!;
+                return false;
+            }
 
-        private void RewriteNode(BSTNode oldNode, BSTNode newNode) 
+            var curr = root;
+            while (curr.Left != null)
+                curr = curr.Left;
+
+            found = curr.Value;
+            return true;
+        }
+        public virtual bool FindMax(out T found)
+        {
+            if (root == null)
+            {
+                found = default!;
+                return false;
+            }
+
+            var curr = root;
+            while (curr.Right != null)
+                curr = curr.Right;
+
+            found = curr.Value;
+            return true;
+        }
+        public virtual IEnumerable<T> Range(T low, T high)
+        {
+            if (Compare(low, high) > 0) yield break; // prázdny interval
+
+            var stack = new Stack<Node>();
+            var curr = root;
+
+            while (stack.Count > 0 || curr != null)
+            {
+                // zostup doľava len ak môže byť ešte >= low
+                while (curr != null)
+                {
+                    // ak je curr.Value < low, všetko vľavo je ešte menšie → preskoč vľavo
+                    if (Compare(curr.Value, low) < 0)
+                    {
+                        curr = curr.Right;
+                    }
+                    else
+                    {
+                        stack.Push(curr);
+                        curr = curr.Left;
+                    }
+                }
+                if (stack.Count == 0) yield break;
+                curr = stack.Pop();
+
+                // inorder ide vzostupne; keď presiahneme high, sme hotoví
+                if (Compare(curr.Value, high) > 0)
+                    yield break;
+
+                // sme v intervale
+                yield return curr.Value;
+
+                // doprava má zmysel len ak curr.Value <= high
+                curr = curr.Right;
+            }
+        }
+        protected virtual void RewriteNode(Node oldNode, Node newNode) 
         {
             oldNode.Value = newNode.Value;
         }
-        private BSTNode FindMinInRightSubTree(BSTNode node) 
+        private Node FindMinInRightSubTree(Node node) 
         {
             var target = node.Right;
             while (target.Left != null) 
@@ -142,7 +206,7 @@ namespace SemestralnaPracaAUS2.Structures
             }
             return target;
         }
-        private BSTNode FindMaxInLeftSubTree(BSTNode node)
+        private Node FindMaxInLeftSubTree(Node node)
         {
             var target = node.Left;
             while (target.Right != null)
@@ -151,7 +215,7 @@ namespace SemestralnaPracaAUS2.Structures
             }
             return target;
         }
-        private BSTNode FindNode(T value) 
+        private Node FindNode(T value) 
         {
             var current = root;
             while (current != null) 
@@ -172,7 +236,7 @@ namespace SemestralnaPracaAUS2.Structures
             }
             return null;
         }
-        private void DetachLeaf(BSTNode node)
+        private void DetachLeaf(Node node)
         {
             if (node.Left != null || node.Right != null)
                 throw new InvalidOperationException("DetachLeaf: node nie je list.");
@@ -190,7 +254,7 @@ namespace SemestralnaPracaAUS2.Structures
             }
             node.Parent = null;
         }
-        public List<T> LevelOrderList()
+        public virtual List<T> LevelOrderList()
         {
             var result = new List<T>();
             foreach (var v in LevelOrder())
@@ -202,7 +266,7 @@ namespace SemestralnaPracaAUS2.Structures
             if (root == null)
                 yield break;
 
-            var q = new Queue<BSTNode>();
+            var q = new Queue<Node>();
             q.Enqueue(root);
 
             while (q.Count > 0)
@@ -214,8 +278,7 @@ namespace SemestralnaPracaAUS2.Structures
                 if (node.Right != null) q.Enqueue(node.Right);
             }
         }
-
-        private void RemoveNodeWithAtMostOneChild(BSTNode target)
+        protected virtual void RemoveNodeWithAtMostOneChild(Node target)
         {
             var child = target.Left ?? target.Right; // buď jedno dieťa, alebo null (list)
 
@@ -241,7 +304,7 @@ namespace SemestralnaPracaAUS2.Structures
             target.Left = null;
             target.Right = null;
         }
-        private void ClearChildrenTarget(BSTNode target) 
+        private void ClearChildrenTarget(Node target) 
         {
             var parent = target.Parent;
             if (target.Left != null && target.Right != null)
@@ -259,15 +322,15 @@ namespace SemestralnaPracaAUS2.Structures
                 parent.Right = subTree;
             }
         }
-        private static int Compare(T a, T b) => a.CompareTo(b);
-        private sealed class BSTNode 
+        protected static int Compare(T a, T b) => a.CompareTo(b);
+        protected class Node 
         {
             public T Value;
-            public BSTNode? Left { get; set; }
-            public BSTNode? Right { get; set; }
-            public BSTNode? Parent { get; set; }
+            public Node? Left { get; set; }
+            public Node? Right { get; set; }
+            public Node? Parent { get; set; }
 
-            public BSTNode(T value, BSTNode? parent = null)
+            public Node(T value, Node? parent = null)
             {
                 Value = value;
                 Parent = parent;
