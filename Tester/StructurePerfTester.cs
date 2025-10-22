@@ -35,6 +35,103 @@ namespace SemestralnaPracaAUS2.Tester
                                         Count after:     {CountAfter}";
         }
 
+
+        public static void RunRandom(BST<Person> tree) 
+        {
+            int countOp = 1000000;
+            double insert = 0.4;
+            double delete =  0.3;
+            double find = 0.1;
+            double intFind = 0.2;
+            var inserted = new List<Person>();
+            var foundInt = new List<Person>();
+            for (int i = 0; i < countOp; i++) 
+            {
+                double operation = Rnd.NextDouble();
+                if (operation < insert)
+                {
+                    int k = Rnd.Next(int.MinValue, int.MaxValue);
+
+                    double weight = k;
+                    var p = new Person("N" + k, "S" + k, weight);
+
+                    if (tree.Add(p))
+                    {
+                        inserted.Add(p);
+                    }
+                }
+                else if (operation < insert + delete)
+                {
+                    if (inserted.Count > 0)
+                    {
+                        int idx = Rnd.Next(inserted.Count);
+                        var key = inserted[idx];
+                        if (tree.Delete(key))
+                        {
+                            inserted[idx] = inserted[^1];
+                            inserted.RemoveAt(inserted.Count - 1);
+                        }
+                    }
+                    else 
+                    {
+                        var key = new Person("c", "f");
+                        if (tree.Delete(key))
+                        {
+                            throw new InvalidOperationException("Nemoze nastat lebo hladam nieco co tam nie je");
+                        }
+                    }
+                    
+                }
+                else if (operation < insert + delete + find)
+                {
+                    Person findPer = null;
+                    if (inserted.Count != 0)
+                    {
+                        int idx = Rnd.Next(inserted.Count);
+                        findPer = inserted[idx];
+                        if (!tree.Find(findPer, out _))
+                            Debug.WriteLine("Prvok sa ma nachadzat v strukture");
+                    }
+                    else
+                    {
+                        findPer = new Person("", "");
+                        if (tree.Find(findPer, out _))
+                            Debug.WriteLine("Prvok sa nema nachadzat v strukture");
+                    }
+                }
+                else if (operation < intFind + insert + delete + find) 
+                {
+                    inserted.Sort((a, b) => a.CompareTo(b));
+                    List<Person> interval = new List<Person>();
+                    int startIdx = 0;
+                    int endIdx = 0;
+                    if (inserted.Count > 2) 
+                    {
+                        int n = inserted.Count;
+                        startIdx = Rnd.Next(0, n);
+                        endIdx = Rnd.Next(startIdx, n);
+                        interval = inserted.GetRange(startIdx, endIdx);
+                    }
+                    var low = inserted.Count == 0 ? new Person("f",":") : inserted[startIdx];
+                    var high = inserted.Count == 0 ? new Person("f", ":") : inserted[endIdx]; 
+
+                    int found = 0;
+                    foreach (var foundIntItem in tree.Range(low, high)) 
+                    {
+                        found++;
+                        foundInt.Add(foundIntItem);
+                    }
+                    for (int j = 0; i < interval.Count; i++)
+                    {
+                        if (interval[i].CompareTo(foundInt[i]) != 0) 
+                        {
+                            throw new InvalidOperationException("Nemoze nastat lebo");
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Otestuje tvoj BST<Person> alebo AVLTree<Person>.
         /// Porovnávacím kľúčom je Person.Weight (double).
