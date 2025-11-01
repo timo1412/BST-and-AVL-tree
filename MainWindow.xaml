@@ -5,13 +5,242 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SemestralnaPracaAUS2"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Semestrálna práca AUS2"
+        WindowState="Maximized"
+        ResizeMode="CanResize">
+
     <Grid>
-        <Button x:Name="TestButton"
-                Content="Test"
-                Width="120" Height="40"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Click="TestButton_Click"/>
+        <!-- 1/5 : 4/5 rozdelenie -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <!-- ľavý panel (1/5) -->
+            <ColumnDefinition Width="4*" />
+            <!-- pravá plocha (4/5) -->
+        </Grid.ColumnDefinitions>
+
+        <!-- ĽAVÝ OVLÁDACÍ PANEL -->
+        <Border Grid.Column="0" Background="#FFF7F7F7" Padding="16" BorderBrush="#FFE0E0E0" BorderThickness="0,0,1,0">
+            <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+                        Margin="0" 
+                        >
+                <TextBlock Text="Ovládanie" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12"/>
+
+                <ComboBox x:Name="cmbOperacia"
+                          SelectedIndex="-1"
+                          Margin="0,0,0,12" SelectionChanged="cmbOperacia_SelectionChanged">
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Vloženie výsledku PCR testu do systému."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Vyhľadanie výsledku testu pre pacienta a zobrazenie všetkých údajov."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis všetkých uskutočnených PCR testov pre daného pacienta">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="usporiadaných podľa dátumu a času ich vykonania"/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis všetkých pozitívnych testov uskutočnených za zadané časové obdobie pre zadaný okres.">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="obdobie pre zadaný okres"/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis všetkých testov uskutočnených za zadané časové obdobie pre zadaný okres."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis všetkých pozitívnych testov uskutočnených za zadané časové obdobie pre zadaný kraj."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis všetkých testov uskutočnených za zadané časové obdobie pre zadaný kraj."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis všetkých pozitívnych testov uskutočnených za zadané časové obdobie."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis všetkých testov uskutočnených za zadané časové obdobie."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis chorých osôb v okrese k zadanému dátumu">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="pričom osobu považujeme za chorú X dní od pozitívneho testu X zadá užívateľ"/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis chorých osôb v okrese k zadanému dátumu">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="pričom osobu považujeme za chorú X dní od pozitívneho testu, pričom choré osoby sú usporiadané podľa hodnoty testu."/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis chorých osôb v kraji k zadanému dátumu">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="pričom osobu považujeme za chorú X dní od pozitívneho testu X zadá užívateľ"/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis chorých osôb k zadanému dátumu">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="pričom osobu považujeme za chorú X dní od pozitívneho testu."/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis jednej chorej osoby k zadanému dátumu">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="pričom osobu považujeme za chorú X dní od pozitívneho testu z každého okresu, ktorá má najvyššiu hodnotu testu."/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis okresov usporiadaných podľa počtu chorých osôb k zadanému dátumu">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="pričom osobu považujeme za chorú X dní od pozitívneho testu."/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis krajov usporiadaných podľa počtu chorých osôb k zadanému dátumu">
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="pričom osobu považujeme za chorú X dní od pozitívneho testu X zadá užívateľ."/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Výpis všetkých testov uskutočnených za zadané časové obdobie na danom pracovisku."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Vyhľadanie PCR testu podľa jeho kódu."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Vloženie osoby do systému."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Trvalé a nevratné vymazanie výsledku PCR testu, test je definovaných svojim kódom."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Vymazanie osoby zo systému aj s jej výsledkami PCR testov."/>
+                    </ComboBoxItem>
+
+                </ComboBox>
+
+                <Button x:Name="btnNahodneNaplnenie"
+                        Content="Náhodné naplnenie systému"
+                        Height="36"
+                        Margin="0,0,0,8"
+                        Click="BtnNahodneNaplnenie_Click"/>
+
+                <Button x:Name="btnNacitanieZoSuboru"
+                        Content="Načítanie zo súboru"
+                        Height="36"
+                        Margin="0,0,0,8"
+                        Click="BtnNacitanieZoSuboru_Click"/>
+               
+                <Button x:Name="btnUlozenieDoSuboru"
+                        Content="Uloženie do súboru"
+                        Height="36"
+                        Click="BtnUlozenieDoSuboru_Click"/>
+
+                <Button x:Name="btnVykonanieOperacie"
+                        Content="Vykonať operáciu"
+                        Height="36"
+                        Click="BtnProcessOperation"/>
+
+
+                <Separator Margin="0,12,0,8"/>
+
+                <Grid x:Name="task1Form" Visibility="Collapsed">
+                    <!-- POTREBUJEŠ 8 riadkov (0..7) -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <!-- doplnené -->
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Nadpis -->
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+               Text="Vloženie výsledku PCR testu"
+               FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum a čas -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <DatePicker x:Name="dpPcrDate" Grid.Row="1" Grid.Column="1" Margin="0,0,0,6"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Čas (HH:mm):" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox x:Name="tbPcrTime" Grid.Row="2" Grid.Column="1" Margin="0,0,0,12" ToolTip="Zadaj čas vo formáte HH:mm (napr. 14:30)"/>
+
+                    <!-- Kód okresu (int) -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Kód okresu:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox x:Name="tbDistrictCode" Grid.Row="3" Grid.Column="1" Margin="0,0,0,12"/>
+
+                    <!-- Kód kraja (int) -->
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Kód kraja:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox x:Name="tbRegionCode" Grid.Row="4" Grid.Column="1" Margin="0,0,0,12"/>
+
+                    <!-- Výsledok testu (bool) -->
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Pozitívny:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <CheckBox x:Name="chkResultPositive" Grid.Row="5" Grid.Column="1" Margin="0,0,0,12" Content="Áno"/>
+
+                    <!-- Hodnota testu (double) -->
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Hodnota testu:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox x:Name="tbTestValue" Grid.Row="6" Grid.Column="1" Margin="0,0,0,12"/>
+
+                    <!-- Poznámka (string) -->
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Poznámka:" VerticalAlignment="Top" Margin="0,0,8,0"/>
+                    <TextBox x:Name="tbNote" Grid.Row="7" Grid.Column="1" Margin="0" AcceptsReturn="True" Height="60" TextWrapping="Wrap"/>
+                </Grid>
+
+                <!-- rozťahovač pre odtlačenie prípadných budúcich prvkov dole -->
+                <StackPanel.Height>
+                    <Binding RelativeSource="{RelativeSource AncestorType=Grid}" Path="ActualHeight"/>
+                </StackPanel.Height>
+            </StackPanel>
+        </Border>
+
+        <!-- PRAVÁ PRACOVNÁ PLOCHA (placeholder) -->
+        <Grid Grid.Column="1" Background="White">
+            <!-- Sem príde obsah aplikácie (tabuľky, grafy, výstupy, atď.) -->
+            <TextBlock Text="Pracovná plocha" 
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="20" Opacity="0.5"/>
+        </Grid>
     </Grid>
 </Window>

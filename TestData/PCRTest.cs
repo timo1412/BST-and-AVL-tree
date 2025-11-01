@@ -19,6 +19,25 @@ namespace SemestralnaPracaAUS2.TestData
         public double ValueOfTest { get; }
         public string Note { get; }
 
+        public PCRTest(
+            DateTime dateStartTest,
+            int numberOfDistrict,
+            int numberOfRegion,
+            bool resultOfTest,
+            double valueOfTest,
+            string note)
+        {
+            DateStartTest = dateStartTest;
+            UniqueNumberPerson = RandomId(5); //TODO: spravit tak aby som pri pridavani testu vytvoril k nemu aj pacienta 
+            UniqueNumberPCR = Rnd.Next(1, 1_000_000 + 1);
+            UniqueNumberPCRPlace = Rnd.Next(1, 20_000 + 1);
+            NumberOfDistrict = numberOfDistrict;
+            NumberOfRegion = numberOfRegion;
+            ResultOfTest = resultOfTest;
+            ValueOfTest = valueOfTest;
+            Note = note;
+        }
+
         public PCRTest()
         {
             // Dátum: 2018-01-01 .. 2025-12-31
