@@ -1,6 +1,7 @@
 ﻿using SemestralnaPracaAUS2.Structures;
 using SemestralnaPracaAUS2.TestData;
 using SemestralnaPracaAUS2.Tester;
+using SemestralnaPracaAUS2.Wrappers;
 using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
@@ -30,6 +31,18 @@ namespace SemestralnaPracaAUS2
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
+            var idxById = new AVLTree<PersonByUniqueNumber>();
+            var idxByBirth = new AVLTree<PersonByBirth>();
+            for (int i = 0; i < 4; i++) 
+            {
+                var p = new Person("First", "Last");
+
+                idxById.Add(PersonByUniqueNumber.Of(p));
+                idxByBirth.Add(PersonByBirth.Of(p));
+            }
+
+
+
             var bst = new BST<Person>();
             StructurePerfTester.RunRandom(bst);
             Debug.WriteLine("BST report:\n" + StructurePerfTester.Run(bst));

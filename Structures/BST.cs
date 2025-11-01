@@ -8,7 +8,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace SemestralnaPracaAUS2.Structures
 {
-    public class BST<T> where T : IMyComparable<T>
+    public class BST<T> : IMyStructure<T> where T : IMyComparable<T>
     {
         protected Node? root;
         public int count;

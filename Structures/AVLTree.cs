@@ -8,7 +8,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace SemestralnaPracaAUS2.Structures
 {
-    public class AVLTree<T>: BST<T> where T : IMyComparable<T>
+    public class AVLTree<T>: BST<T>, IMyStructure<T> where T : IMyComparable<T>
     {
         protected override AvlNode NewNode(T value, Node? parent) => new AvlNode(value, parent);
         protected static AvlNode? A(Node? n) => (AvlNode?)n;
