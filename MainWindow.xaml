@@ -149,13 +149,10 @@
                         <TextBlock Text="Vymazanie osoby zo systému aj s jej výsledkami PCR testov."/>
                     </ComboBoxItem>
 
+                    <ComboBoxItem x:Name="cmbRandomFill">
+                        <TextBlock Text="Náhodné naplnenie systému — parametre"/>
+                    </ComboBoxItem>
                 </ComboBox>
-
-                <Button x:Name="btnNahodneNaplnenie"
-                        Content="Náhodné naplnenie systému"
-                        Height="36"
-                        Margin="0,0,0,8"
-                        Click="BtnNahodneNaplnenie_Click"/>
 
                 <Button x:Name="btnNacitanieZoSuboru"
                         Content="Načítanie zo súboru"
@@ -228,6 +225,180 @@
                     <TextBox x:Name="tbNote" Grid.Row="7" Grid.Column="1" Margin="0" AcceptsReturn="True" Height="60" TextWrapping="Wrap"/>
                 </Grid>
 
+                <Grid x:Name="randomFillForm" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- pocet osob -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- pocet pcr -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- datum od -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- datum do -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dayTimeFromText -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dayTimeToText -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- positiveRatio -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Nadpis -->
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+               Text="Náhodné naplnenie systému — parametre"
+               FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Počet osôb (int) -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Počet osôb:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox x:Name="tbSeedPersons" Grid.Row="1" Grid.Column="1" Margin="0,0,0,12" />
+
+                    <!-- Počet PCR testov (int) -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Počet PCR testov:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox x:Name="tbSeedPcrCount" Grid.Row="2" Grid.Column="1" Margin="0,0,0,12" />
+
+                    <!-- Dátum od (DateTime) -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Dátum od:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="3" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpSeedFrom" Grid.Column="0"/>
+                        <TextBox x:Name="tbSeedFromTime" Grid.Column="1" Width="70" Margin="8,0,0,0" ToolTip="Čas vo formáte HH:mm (napr. 08:00)"/>
+                    </Grid>
+
+                    <!-- Dátum do (DateTime) -->
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Dátum do:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="4" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpSeedTo" Grid.Column="0"/>
+                        <TextBox x:Name="tbSeedToTime" Grid.Column="1" Width="70"  Margin="8,0,0,0"  ToolTip="Čas vo formáte HH:mm (napr. 17:30)"/>
+                    </Grid>
+
+                    <!-- dayTimeFromText (string) -->
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="dayTimeFromText:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox x:Name="tbSeedDayFrom" Grid.Row="5" Grid.Column="1" Margin="0,0,0,12" ToolTip="Ľubovoľný textový popis začiatku denného intervalu" />
+
+                    <!-- dayTimeToText (string) -->
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="dayTimeToText:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox x:Name="tbSeedDayTo" Grid.Row="6" Grid.Column="1" Margin="0,0,0,12" ToolTip="Ľubovoľný textový popis konca denného intervalu" />
+
+                    <!-- positiveRatio (double) -->
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Positive ratio (%):" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox x:Name="tbSeedPositiveRatio" Grid.Row="7" Grid.Column="1" Margin="0,0,0,0" ToolTip="Percentuálna pozitivita, napr. 12.5 pre 12,5%" />
+                </Grid>
+
+                <Grid x:Name="task2Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- ID pacienta -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kód PCR -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Nadpis -->
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+               Text="Vyhľadanie výsledku testu pre pacienta"
+               FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Unikátne číslo pacienta (string) -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="ID pacienta:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox x:Name="tbFindPersonId" Grid.Row="1" Grid.Column="1" Margin="0,0,0,12"
+             ToolTip="Unikátne číslo pacienta (napr. 6 znakov)"/>
+
+                    <!-- Kód PCR testu (int) -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Kód PCR testu:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox x:Name="tbFindPcrCode" Grid.Row="2" Grid.Column="1" Margin="0,0,0,0"
+             ToolTip="Celé číslo – kód PCR testu"/>
+                </Grid>
+
+                <Grid x:Name="task3Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- ID pacienta -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="PCR testy pre osobu (zoradené podľa dátumu/času)"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="ID pacienta:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="1" Grid.Column="1" x:Name="tbListPersonId" ToolTip="Unikátne číslo pacienta"/>
+                </Grid>
+
+                <Grid x:Name="task4Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- datum od -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- datum do -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kod okresu -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Nadpis -->
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+               Text="Pozitívne testy – časové obdobie a okres"
+               FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum od (DateTime) -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum od:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpPosOkresFrom" Grid.Column="0"/>
+                        <TextBox x:Name="tbPosOkresFromTime" Grid.Column="1" Width="70"
+                 Margin="8,0,0,0" ToolTip="Čas vo formáte HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- Dátum do (DateTime) -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Dátum do:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="2" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpPosOkresTo" Grid.Column="0"/>
+                        <TextBox x:Name="tbPosOkresToTime" Grid.Column="1" Width="70"
+                 Margin="8,0,0,0" ToolTip="Čas vo formáte HH:mm (napr. 23:59)"/>
+                    </Grid>
+
+                    <!-- Kód okresu (int) -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Kód okresu:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox x:Name="tbPosOkresDistrict" Grid.Row="3" Grid.Column="1"
+             ToolTip="Celé číslo – kód okresu"/>
+                </Grid>
+
+
                 <!-- rozťahovač pre odtlačenie prípadných budúcich prvkov dole -->
                 <StackPanel.Height>
                     <Binding RelativeSource="{RelativeSource AncestorType=Grid}" Path="ActualHeight"/>
@@ -235,12 +406,78 @@
             </StackPanel>
         </Border>
 
-        <!-- PRAVÁ PRACOVNÁ PLOCHA (placeholder) -->
-        <Grid Grid.Column="1" Background="White">
-            <!-- Sem príde obsah aplikácie (tabuľky, grafy, výstupy, atď.) -->
-            <TextBlock Text="Pracovná plocha" 
-                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                       FontSize="20" Opacity="0.5"/>
+        <!-- PRAVÁ PRACOVNÁ PLOCHA -->
+        <Grid Grid.Column="1" Background="White" x:Name="mainArea">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- horný panel -->
+                <RowDefinition Height="*"/>
+                <!-- tabuľky -->
+                <RowDefinition Height="Auto"/>
+                <!-- KONZOLA -->
+                <RowDefinition Height="Auto"/>
+                <!-- spodný status -->
+            </Grid.RowDefinitions>
+
+            <!-- horný panel (voliteľný) -->
+            <DockPanel Grid.Row="0" Margin="8" LastChildFill="False">
+                <TextBlock Text="Zoznamy" FontSize="16" FontWeight="SemiBold" Margin="0,0,12,0"/>
+            </DockPanel>
+
+            <!-- tabuľkové zobrazenie -->
+            <TabControl Grid.Row="1" x:Name="tabLists" Margin="8">
+                <TabItem Header="Osoby">
+                    <DataGrid x:Name="dgPersons"
+                      AutoGenerateColumns="True"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      EnableRowVirtualization="True"
+                      EnableColumnVirtualization="True"
+                      SelectionMode="Extended"
+                      Margin="0"
+                      AlternationCount="2"/>
+                </TabItem>
+                <TabItem Header="PCR testy">
+                    <DataGrid x:Name="dgPcrs"
+                      AutoGenerateColumns="True"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      EnableRowVirtualization="True"
+                      EnableColumnVirtualization="True"
+                      SelectionMode="Extended"
+                      Margin="0"
+                      AlternationCount="2"/>
+                </TabItem>
+            </TabControl>
+
+            <!-- GUI konzola -->
+            <Grid Grid.Row="2" Margin="8,0,8,8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="120"/>
+                    <!-- výška konzoly -->
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,4">
+                    <TextBlock Text="Konzola" FontWeight="SemiBold" Margin="0,0,12,0"/>
+                    <Button Content="Vyčistiť" Click="BtnClearConsole_Click" Padding="8,2" />
+                </DockPanel>
+
+                <TextBox x:Name="txtConsole"
+                 Grid.Row="1"
+                 IsReadOnly="True"
+                 AcceptsReturn="True"
+                 TextWrapping="NoWrap"
+                 VerticalScrollBarVisibility="Auto"
+                 HorizontalScrollBarVisibility="Auto"/>
+            </Grid>
+
+            <!-- spodný status riadok -->
+            <StatusBar Grid.Row="3">
+                <StatusBarItem>
+                    <TextBlock x:Name="txtStatus" Text="Pripravené" />
+                </StatusBarItem>
+            </StatusBar>
         </Grid>
     </Grid>
 </Window>

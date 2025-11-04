@@ -28,6 +28,14 @@ namespace SemestralnaPracaAUS2.TestData
             Birth = minDate.AddDays(rnd.Next(totalDays + 1));
             UniqueNumber = GenerateRandomString(6);
         }
+        public Person(string firstName, string lastName, double weight, DateTime birth, string uniqueNumber)
+        {
+            FirstName = firstName ?? throw new ArgumentNullException(nameof(firstName));
+            LastName = lastName ?? throw new ArgumentNullException(nameof(lastName));
+            Weight = weight;
+            Birth = birth;
+            UniqueNumber = uniqueNumber ?? throw new ArgumentNullException(nameof(uniqueNumber));
+        }
         private static string GenerateRandomString(int length)
         {
             // Používame StringBuilder pre efektívne spájanie znakov

@@ -29,19 +29,25 @@ namespace SemestralnaPracaAUS2.Wrappers
         public static PersonByUniqueNumber Of(Person p) =>
             new PersonByUniqueNumber(p, p.UniqueNumber ?? "", p.Birth, p.LastName, p.FirstName);
 
-        // „kľúčový“ sentinel (napr. pre Find/Range)
-        public static PersonByUniqueNumber Key(string id, DateTime? birth = null) =>
-            new PersonByUniqueNumber(null, id ?? "", birth ?? DateTime.MinValue, "", "");
+        // key-only (na Contains/TryFind)
+        public static PersonByUniqueNumber FromKey(string id) =>
+            new PersonByUniqueNumber(null, id, default, string.Empty, string.Empty);
+
+        // alias
+        public static PersonByUniqueNumber Key(string id) =>
+            new PersonByUniqueNumber(null, id, default, string.Empty, string.Empty);
+
 
         public int CompareTo(PersonByUniqueNumber other)
         {
             int c = string.Compare(UniqueNumber, other.UniqueNumber, StringComparison.Ordinal);
             if (c != 0) return c;
-            c = Birth.CompareTo(other.Birth);
-            if (c != 0) return c;
-            c = string.Compare(LastName, other.LastName, StringComparison.Ordinal);
-            if (c != 0) return c;
-            return string.Compare(FirstName, other.FirstName, StringComparison.Ordinal);
+            //c = Birth.CompareTo(other.Birth);
+            //if (c != 0) return c;
+            //c = string.Compare(LastName, other.LastName, StringComparison.Ordinal);
+            //if (c != 0) return c;
+            //return string.Compare(FirstName, other.FirstName, StringComparison.Ordinal);
+            return string.Compare(UniqueNumber, other.UniqueNumber, StringComparison.Ordinal);
         }
 
         public override bool Equals(object obj) => obj is PersonByUniqueNumber o && CompareTo(o) == 0;

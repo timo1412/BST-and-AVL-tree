@@ -24,22 +24,26 @@ namespace SemestralnaPracaAUS2.Wrappers
             UniqueNumberPerson = personId ?? "";
         }
 
-        // bežný záznam (zabalí existujúci PCRTest)
+        // plnohodnotný wrapper z objektu
         public static PcrByCode Of(PCRTest t) =>
             new PcrByCode(t, t.UniqueNumberPCR, t.DateStartTest, t.UniqueNumberPerson);
 
-        // sentinel — len podľa kľúča (napr. Find/Delete)
+        // key-only (na Contains/TryFind)
+        public static PcrByCode FromKey(int code) =>
+            new PcrByCode(null, code, default, string.Empty);
+
+        // alias (rovnaké ako FromKey)
         public static PcrByCode Key(int code) =>
-            new PcrByCode(null, code, DateTime.MinValue, "");
+            new PcrByCode(null, code, default, string.Empty);
 
         public int CompareTo(PcrByCode other)
         {
-            int c = UniqueNumberPCR.CompareTo(other.UniqueNumberPCR);
-            if (c != 0) return c;
-            // tie-breakery pre totálne poradie (ak by sa v budúcnosti kód nereálne duplicitne objavil)
-            c = DateStartTest.CompareTo(other.DateStartTest);
-            if (c != 0) return c;
-            return string.Compare(UniqueNumberPerson, other.UniqueNumberPerson, StringComparison.Ordinal);
+            return UniqueNumberPCR.CompareTo(other.UniqueNumberPCR);
+            //if (c != 0) return c;
+            //// tie-breakery pre totálne poradie (ak by sa v budúcnosti kód nereálne duplicitne objavil)
+            //c = DateStartTest.CompareTo(other.DateStartTest);
+            //if (c != 0) return c;
+            //return string.Compare(UniqueNumberPerson, other.UniqueNumberPerson, StringComparison.Ordinal);
         }
 
         public override bool Equals(object obj) => obj is PcrByCode o && CompareTo(o) == 0;

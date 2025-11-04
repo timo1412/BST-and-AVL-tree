@@ -38,6 +38,29 @@ namespace SemestralnaPracaAUS2.TestData
             Note = note;
         }
 
+        public PCRTest(
+            DateTime dateStartTest,
+            int numberOfDistrict,
+            int numberOfRegion,
+            bool resultOfTest,
+            double valueOfTest,
+            string note,
+            string uniqueNumberPerson,
+            int uniqueNumberPcr,
+            int? uniqueNumberPcrPlace)
+        {
+            DateStartTest = dateStartTest;
+            UniqueNumberPerson = uniqueNumberPerson ?? RandomId(5);
+            UniqueNumberPCR = uniqueNumberPcr;
+            // accept nullable place; if null generate a random place id like the default ctor
+            UniqueNumberPCRPlace = uniqueNumberPcrPlace ?? Rnd.Next(1, 20_000 + 1);
+            NumberOfDistrict = numberOfDistrict;
+            NumberOfRegion = numberOfRegion;
+            ResultOfTest = resultOfTest;
+            ValueOfTest = valueOfTest;
+            Note = note;
+        }
+
         public PCRTest()
         {
             // Dátum: 2018-01-01 .. 2025-12-31

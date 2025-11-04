@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static SemestralnaPracaAUS2.TestData.SeedContracts;
 
 namespace SemestralnaPracaAUS2.Architecture
 {
@@ -39,6 +40,57 @@ namespace SemestralnaPracaAUS2.Architecture
             catch (Exception ex)
             {
                 return (false, ex.Message);
+            }
+        }
+        public (bool ok, string? error, (Person Person, PCRTest Pcr)? result) FindPcrForPerson(string personId, int pcrCode)
+        {
+            try
+            {
+                var (person, pcr) = _model.FindPcrByCodeForPerson(personId, pcrCode);
+                return (true, null, (person, pcr));
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, IReadOnlyList<PCRTest>? tests) ListPositiveByDistrictPeriod(DateTime from, DateTime to, int district)
+        {
+            try
+            {
+                var tests = _model.ListPositiveByDistrictPeriod(from, to, district);
+                return (true, null, tests);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+
+        public (bool ok, string? error, SeedResult? result) SeedRandom(SeedRequest req)
+        {
+            try
+            {
+                var res = _model.SeedRandom(req);     // implementáciu doplníme neskôr
+                return (true, null, res);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+
+        public (bool ok, string? error, IReadOnlyList<PCRTest>? tests)
+            ListPcrForPerson(string personId)
+        {
+            try
+            {
+                var tests = _model.ListPcrForPerson(personId);
+                return (true, null, tests);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
             }
         }
 

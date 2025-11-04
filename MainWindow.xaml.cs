@@ -56,13 +56,13 @@ namespace SemestralnaPracaAUS2
                     ShowTask1Form();
                     break;
                 case 2:
-                    // TODO: Vyhľadanie výsledku testu pre pacienta a zobrazenie všetkých údajov.
+                    ShowTask2Form();   // << tu zobrazíme nový formulár
                     break;
                 case 3:
-                    // TODO: Výpis všetkých uskutočnených PCR testov pre daného pacienta (tooltip: usporiadané podľa dátumu a času).
+                    ShowTask3Form();
                     break;
                 case 4:
-                    // TODO: Výpis všetkých pozitívnych testov za zadané obdobie pre zadaný okres.
+                    ShowTask4Form();
                     break;
                 case 5:
                     // TODO: Výpis všetkých testov za zadané obdobie pre zadaný okres.
@@ -115,8 +115,27 @@ namespace SemestralnaPracaAUS2
                 case 21:
                     // TODO: Vymazanie osoby zo systému aj s jej výsledkami PCR testov.
                     break;
+                case 22:
+                    ShowRandomFillForm();
+                    break;
                 default:
-                    // Neplatný index (mimo 1..21)
+                    try
+                    {
+                        // TODO: čítaj reálne hodnoty z GUI (TextBoxy/DatePickery)
+                        _controller.SeedSystemFromGui(
+                            persons: 10,
+                            pcrPerPerson: 5,
+                            dateFrom: new DateTime(2018, 1, 1),
+                            dateTo: new DateTime(2025, 12, 31),
+                            dayTimeFromText: "06:00",
+                            dayTimeToText: "20:00",
+                            positiveRatio: 0.60
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                     break;
             }
         }
@@ -125,10 +144,13 @@ namespace SemestralnaPracaAUS2
         {
             
         }
-        //BtnNacitanieZoSuboru_Click  BtnUlozenieDoSuboru_Click
-        private void BtnNahodneNaplnenie_Click(object sender, RoutedEventArgs e)
+        private void ShowRandomFillForm()
         {
+            // Skry všetky ostatné panely, ktoré máš:
+            HideAllTaskForms();
 
+            if (randomFillForm != null)
+                randomFillForm.Visibility = Visibility.Visible;
         }
         private void BtnNacitanieZoSuboru_Click(object sender, RoutedEventArgs e)
         {
@@ -138,28 +160,36 @@ namespace SemestralnaPracaAUS2
         {
 
         }
-
         private void BtnProcessOperation(object sender, RoutedEventArgs e)
         {
             try
             {
+                int task = GetSelectedTaskIndex1Based();
+                if (task == 0) throw new InvalidOperationException("Vyber operáciu v zozname.");
 
-                _controller.InsertPcrFromGui(
-                    selectedDate: dpPcrDate.SelectedDate,
-                    timeText: tbPcrTime.Text,
-                    districtText: tbDistrictCode.Text,
-                    regionText: tbRegionCode.Text,
-                    resultPositive: chkResultPositive.IsChecked == true,
-                    valueText: tbTestValue.Text,
-                    note: tbNote.Text
-                );
+                switch (task)
+                {
+                    case 1:   // Insert PCR
+                        HandleInsertPcr();
+                        break;
+                    case 2:
+                        HandleFindPcrForPerson();
+                        break;
+                    case 3:
+                        HandleListPcrForPerson();
+                        break;
+                    case 4:
+                        HandleListPositiveByDistrictPeriod();
+                        break;
+                    case 22:  // Náhodné naplnenie systému
+                        HandleSeedSystem();
+                        break;
 
-                MessageBox.Show("PCR test bol vložený.", "Hotovo",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-
-                // voliteľne: vyčistiť formulár
-                // tbPcrTime.Clear(); tbDistrictCode.Clear(); tbRegionCode.Clear(); tbTestValue.Clear(); tbNote.Clear();
-                // dpPcrDate.SelectedDate = null; chkResultPositive.IsChecked = false;
+                    default:
+                        MessageBox.Show("Táto operácia zatiaľ nie je implementovaná.", "Info",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        break;
+                }
             }
             catch (Exception ex)
             {
@@ -170,13 +200,145 @@ namespace SemestralnaPracaAUS2
         private void HideAllTaskForms()
         {
             if (task1Form != null) task1Form.Visibility = Visibility.Collapsed;
-            // sem neskôr pridáš ďalšie: task2Form.Visibility = Collapsed; atď.
+            if (task2Form != null) task2Form.Visibility = Visibility.Collapsed;
+            if (task3Form != null) task3Form.Visibility = Visibility.Collapsed;
+            if (task4Form != null) task4Form.Visibility = Visibility.Collapsed;
+            if (randomFillForm != null) randomFillForm.Visibility = Visibility.Collapsed;
         }
-
+        private void ShowTask4Form()
+        {
+            HideAllTaskForms();
+            task4Form.Visibility = Visibility.Visible;
+        }
+        private void ShowTask3Form()
+        {
+            HideAllTaskForms();
+            task3Form.Visibility = Visibility.Visible;
+        }
+        private void ShowTask2Form()
+        {
+            HideAllTaskForms();
+            task2Form.Visibility = Visibility.Visible;
+        }
         private void ShowTask1Form()
         {
             HideAllTaskForms();
             task1Form.Visibility = Visibility.Visible;
+        }
+        private void HandleListPositiveByDistrictPeriod() 
+        {
+            // nič neparsujem, nič nevalidujem – posúvam „surové“ vstupy do Controller-a
+            var dateFrom = dpPosOkresFrom.SelectedDate;     // DateTime?
+            var timeFrom = tbPosOkresFromTime.Text;         // string
+            var dateTo = dpPosOkresTo.SelectedDate;       // DateTime?
+            var timeTo = tbPosOkresToTime.Text;           // string
+            var district = tbPosOkresDistrict.Text;         // string
+
+            var tests = _controller.ListPositiveByDistrictFromGui(
+                dateFrom, timeFrom,
+                dateTo, timeTo,
+                district
+            );
+
+            // zobrazíme výsledky (bez ďalšej logiky)
+            dgPcrs.ItemsSource = tests;
+            tabLists.SelectedIndex = 1; // prepni na tabu „PCR testy“
+
+            txtStatus.Text = "Vyhľadávanie dokončené.";
+        }
+        private void HandleListPcrForPerson()
+        {
+            var personIdText = tbListPersonId.Text; // raw vstup
+
+            var tests = _controller.ListPcrForPersonFromGui(personIdText);
+
+            dgPcrs.ItemsSource = tests;   // zobraz do tabuľky PCR testy
+            tabLists.SelectedIndex = 1;   // prepni na „PCR testy“
+
+            txtStatus.Text = "Zobrazené PCR testy pre pacienta.";
+            LogToGui($"[ListPCR-ByPerson] personId='{personIdText}' → loaded.");
+        }
+        private void HandleFindPcrForPerson()
+        {
+            var (person, pcr) = _controller.FindPcrForPersonFromGui(
+                tbFindPersonId.Text,
+                tbFindPcrCode.Text
+            );
+
+            if (person == null || pcr == null)
+            {
+                dgPersons.ItemsSource = null;
+                dgPcrs.ItemsSource = null;
+                txtStatus.Text = "Nenašli sa záznamy.";
+                LogToGui($"[FindPCR] Nenájdené. personId='{tbFindPersonId.Text}', pcrCode='{tbFindPcrCode.Text}'.");
+                return;
+            }
+
+            dgPersons.ItemsSource = new[] { person };
+            dgPcrs.ItemsSource = new[] { pcr };
+            txtStatus.Text = $"Nájdený test {pcr.UniqueNumberPCR} pre pacienta {person.UniqueNumber}.";
+            LogToGui($"[FindPCR] OK Person={person.UniqueNumber}, PCR={pcr.UniqueNumberPCR} Date={pcr.DateStartTest:yyyy-MM-dd HH:mm}");
+        }
+        private void LogToGui(string message)
+        {
+            var line = $"{DateTime.Now:HH:mm:ss} {message}";
+            System.Diagnostics.Debug.WriteLine(line);
+
+            if (txtConsole != null)
+            {
+                txtConsole.AppendText(line + Environment.NewLine);
+                txtConsole.ScrollToEnd();
+            }
+        }
+        private void BtnClearConsole_Click(object sender, RoutedEventArgs e)
+        {
+            txtConsole.Clear();
+        }
+        private void HandleInsertPcr()
+        {
+            _controller.InsertPcrFromGui(
+                selectedDate: dpPcrDate.SelectedDate,
+                timeText: tbPcrTime.Text,
+                districtText: tbDistrictCode.Text,
+                regionText: tbRegionCode.Text,
+                resultPositive: chkResultPositive.IsChecked == true,
+                valueText: tbTestValue.Text,
+                note: tbNote.Text
+            );
+
+            MessageBox.Show("PCR test bol vložený.", "Hotovo",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+
+            // voliteľné: reset polí
+            // tbPcrTime.Clear(); tbDistrictCode.Clear(); tbRegionCode.Clear(); tbTestValue.Clear(); tbNote.Clear();
+            // dpPcrDate.SelectedDate = null; chkResultPositive.IsChecked = false;
+        }
+
+        // 2) Samostatná obsluha pre „Náhodné naplnenie systému“
+        private void HandleSeedSystem()
+        {
+            // POZOR: ak máš iné názvy prvkov, uprav tu:
+            int persons = int.Parse(tbSeedPersons.Text);
+            int pcrPerPerson = int.Parse(tbSeedPcrCount.Text);
+            DateTime dateFrom = dpSeedFrom.SelectedDate ?? throw new InvalidOperationException("Zvoľ počiatočný dátum seeding-u.");
+            DateTime dateTo = dpSeedTo.SelectedDate ?? throw new InvalidOperationException("Zvoľ koncový dátum seeding-u.");
+            string dayFrom = tbSeedDayFrom.Text;   // "06:00"
+            string dayTo = tbSeedDayTo.Text;     // "20:00"
+            double positiveRatio = double.Parse(
+                tbSeedPositiveRatio.Text.Replace(',', '.'),
+                System.Globalization.CultureInfo.InvariantCulture
+            );
+
+            _controller.SeedSystemFromGui(
+                persons: persons,
+                pcrPerPerson: pcrPerPerson,
+                dateFrom: dateFrom,
+                dateTo: dateTo,
+                dayTimeFromText: dayFrom,
+                dayTimeToText: dayTo,
+                positiveRatio: positiveRatio
+            );
+            // Controller už zobrazí MessageBox s výsledkom.
         }
     }
 }
