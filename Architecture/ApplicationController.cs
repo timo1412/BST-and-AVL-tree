@@ -183,5 +183,33 @@ namespace SemestralnaPracaAUS2.Architecture
                 .OrderBy(t => t.DateStartTest)
                 .ToList();
         }
+        public IReadOnlyList<PCRTest> ListAllByDistrictFromGui(
+    DateTime? dateFrom, string timeFrom,
+    DateTime? dateTo, string timeTo,
+    string districtText)
+        {
+            // 1) Validácia vstupov
+            if (dateFrom is null) throw new InvalidOperationException("Zvoľ počiatočný dátum.");
+            if (dateTo is null) throw new InvalidOperationException("Zvoľ koncový dátum.");
+
+            var fromTs = ParseTime(timeFrom);   // existujúci helper
+            var toTs = ParseTime(timeTo);
+
+            var from = dateFrom.Value.Date + fromTs;
+            var to = dateTo.Value.Date + toTs;
+
+            if (to < from)
+                throw new InvalidOperationException("Dátum/čas 'Do' musí byť ≥ 'Od'.");
+
+            // kód okresu 1..79
+            int district = ParseIntInRange(districtText, 1, 79, "Kód okresu musí byť v intervale 1..79.");
+
+            // 2) Delegácia na View → Model
+            var (ok, error, tests) = _view.ListAllByDistrictPeriod(from, to, district);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 3) Výstup pre DataGrid
+            return tests ?? Array.Empty<PCRTest>();
+        }
     }
 }

@@ -65,7 +65,7 @@ namespace SemestralnaPracaAUS2
                     ShowTask4Form();
                     break;
                 case 5:
-                    // TODO: Výpis všetkých testov za zadané obdobie pre zadaný okres.
+                    ShowTask5Form();
                     break;
                 case 6:
                     // TODO: Výpis všetkých pozitívnych testov za zadané obdobie pre zadaný kraj.
@@ -181,6 +181,9 @@ namespace SemestralnaPracaAUS2
                     case 4:
                         HandleListPositiveByDistrictPeriod();
                         break;
+                    case 5:
+                        HandleListAllByDistrictPeriod();
+                        break;
                     case 22:  // Náhodné naplnenie systému
                         HandleSeedSystem();
                         break;
@@ -203,7 +206,13 @@ namespace SemestralnaPracaAUS2
             if (task2Form != null) task2Form.Visibility = Visibility.Collapsed;
             if (task3Form != null) task3Form.Visibility = Visibility.Collapsed;
             if (task4Form != null) task4Form.Visibility = Visibility.Collapsed;
+            if (task5Form != null) task5Form.Visibility = Visibility.Collapsed;
             if (randomFillForm != null) randomFillForm.Visibility = Visibility.Collapsed;
+        }
+        private void ShowTask5Form()
+        {
+            HideAllTaskForms();
+            task5Form.Visibility = Visibility.Visible;
         }
         private void ShowTask4Form()
         {
@@ -224,6 +233,24 @@ namespace SemestralnaPracaAUS2
         {
             HideAllTaskForms();
             task1Form.Visibility = Visibility.Visible;
+        }
+        private void HandleListAllByDistrictPeriod()
+        {
+            var dateFrom = dpAllOkresFrom.SelectedDate;   // DateTime?
+            var timeFrom = tbAllOkresFromTime.Text;       // string
+            var dateTo = dpAllOkresTo.SelectedDate;     // DateTime?
+            var timeTo = tbAllOkresToTime.Text;         // string
+            var district = tbAllOkresDistrict.Text;       // string
+
+            var tests = _controller.ListAllByDistrictFromGui(
+                dateFrom, timeFrom,
+                dateTo, timeTo,
+                district
+            );
+
+            dgPcrs.ItemsSource = tests;
+            tabLists.SelectedIndex = 1; // prepni na „PCR testy“
+            txtStatus.Text = "Zobrazené testy za zadané obdobie pre okres.";
         }
         private void HandleListPositiveByDistrictPeriod() 
         {

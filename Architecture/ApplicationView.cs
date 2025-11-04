@@ -93,6 +93,18 @@ namespace SemestralnaPracaAUS2.Architecture
                 return (false, ex.Message, null);
             }
         }
+        public (bool ok, string? error, IReadOnlyList<PCRTest>? tests) ListAllByDistrictPeriod(DateTime from, DateTime to, int district)
+        {
+            try
+            {
+                var tests = _model.ListAllByDistrictPeriod(from, to, district);
+                return (true, null, tests);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
 
         public readonly record struct PcrInputDto(
             DateTime DateStartTest,

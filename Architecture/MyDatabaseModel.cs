@@ -280,5 +280,27 @@ namespace SemestralnaPracaAUS2.Model
             return results;
         }
 
+        public IReadOnlyList<PCRTest> ListAllByDistrictPeriod(DateTime from, DateTime to, int district)
+        {
+            if (district <= 0) throw new ArgumentOutOfRangeException(nameof(district));
+            if (to < from) (from, to) = (to, from);
+
+            var lo = PcrByDistrictDate.Low(district, from);
+            var hi = PcrByDistrictDate.High(district, to);
+
+            var results = new List<PCRTest>();
+
+            // Použijeme existujúcu intervalovú enumeráciu AVL stromu
+            foreach (var wrap in _idxByDistrictDate.Range(lo, hi))
+            {
+                var t = wrap.Value; // PCRTest
+                if (t.NumberOfDistrict == district) // istota na okres
+                    results.Add(t);
+            }
+
+            // zoradenie podľa dátumu a času vykonania
+            results.Sort((a, b) => a.DateStartTest.CompareTo(b.DateStartTest));
+            return results;
+        }
     }
 }

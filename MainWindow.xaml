@@ -339,9 +339,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
-             Text="PCR testy pre osobu (zoradené podľa dátumu/času)"
-             FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="PCR testy pre osobu (zoradené podľa dátumu/času)" FontWeight="SemiBold" Margin="0,0,0,8"/>
 
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="ID pacienta:" VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <TextBox   Grid.Row="1" Grid.Column="1" x:Name="tbListPersonId" ToolTip="Unikátne číslo pacienta"/>
@@ -395,6 +393,56 @@
                     <!-- Kód okresu (int) -->
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Kód okresu:" VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <TextBox x:Name="tbPosOkresDistrict" Grid.Row="3" Grid.Column="1"
+             ToolTip="Celé číslo – kód okresu"/>
+                </Grid>
+                
+                <Grid x:Name="task5Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- datum od -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- datum do -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kod okresu -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Všetky testy – časové obdobie a okres"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum od -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum od:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpAllOkresFrom" Grid.Column="0"/>
+                        <TextBox   x:Name="tbAllOkresFromTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- Dátum do -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Dátum do:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="2" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpAllOkresTo" Grid.Column="0"/>
+                        <TextBox   x:Name="tbAllOkresToTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 23:59)"/>
+                    </Grid>
+
+                    <!-- Kód okresu -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Kód okresu:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   x:Name="tbAllOkresDistrict" Grid.Row="3" Grid.Column="1"
              ToolTip="Celé číslo – kód okresu"/>
                 </Grid>
 
