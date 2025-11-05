@@ -211,5 +211,348 @@ namespace SemestralnaPracaAUS2.Architecture
             // 3) Výstup pre DataGrid
             return tests ?? Array.Empty<PCRTest>();
         }
+
+        public IReadOnlyList<PCRTest> ListPositiveByRegionFromGui(DateTime? dateFrom, string timeFrom,DateTime? dateTo, string timeTo, string regionText)
+        {
+            // 1) Validácia vstupov
+            if (dateFrom is null) throw new InvalidOperationException("Zvoľ počiatočný dátum.");
+            if (dateTo is null) throw new InvalidOperationException("Zvoľ koncový dátum.");
+
+            var fromTs = ParseTime(timeFrom);
+            var toTs = ParseTime(timeTo);
+
+            var from = dateFrom.Value.Date + fromTs;
+            var to = dateTo.Value.Date + toTs;
+
+            if (to < from)
+                throw new InvalidOperationException("Dátum/čas 'Do' musí byť ≥ 'Od'.");
+
+            // kód kraja 1..8
+            int region = ParseIntInRange(regionText, 1, 8, "Kód kraja musí byť v intervale 1..8.");
+
+            // 2) Delegácia na View → Model
+            var (ok, error, tests) = _view.ListPositiveByRegionPeriod(from, to, region);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 3) Výsledok pre DataGrid
+            return tests ?? Array.Empty<PCRTest>();
+        }
+        public IReadOnlyList<PCRTest> ListPositiveAllFromGui(DateTime? dateFrom, string timeFrom, DateTime? dateTo, string timeTo)
+        {
+            // 1) Validácia vstupov
+            if (dateFrom is null) throw new InvalidOperationException("Zvoľ počiatočný dátum.");
+            if (dateTo is null) throw new InvalidOperationException("Zvoľ koncový dátum.");
+
+            var fromTs = ParseTime(timeFrom);
+            var toTs = ParseTime(timeTo);
+
+            var from = dateFrom.Value.Date + fromTs;
+            var to = dateTo.Value.Date + toTs;
+
+            if (to < from)
+                throw new InvalidOperationException("Dátum/čas 'Do' musí byť ≥ 'Od'.");
+
+            // 2) Delegácia na View → Model
+            var (ok, error, tests) = _view.ListPositiveAllPeriod(from, to);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 3) Výsledok pre DataGrid
+            return tests ?? Array.Empty<PCRTest>();
+        }
+        public IReadOnlyList<PCRTest> ListAllByRegionFromGui(DateTime? dateFrom, string timeFrom,DateTime? dateTo, string timeTo, string regionText)
+        {
+            // 1) Validácia vstupov
+            if (dateFrom is null) throw new InvalidOperationException("Zvoľ počiatočný dátum.");
+            if (dateTo is null) throw new InvalidOperationException("Zvoľ koncový dátum.");
+
+            var fromTs = ParseTime(timeFrom);
+            var toTs = ParseTime(timeTo);
+
+            var from = dateFrom.Value.Date + fromTs;
+            var to = dateTo.Value.Date + toTs;
+
+            if (to < from)
+                throw new InvalidOperationException("Dátum/čas 'Do' musí byť ≥ 'Od'.");
+
+            // 2) Kód kraja 1..8
+            int region = ParseIntInRange(regionText, 1, 8, "Kód kraja musí byť v intervale 1..8.");
+
+            // 3) Delegácia na View → Model
+            var (ok, error, tests) = _view.ListAllByRegionPeriod(from, to, region);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 4) Výsledok pre DataGrid (prípadne utriediť podľa dátumu, ak to nerobí model)
+            return tests ?? Array.Empty<PCRTest>();
+        }
+        public IReadOnlyList<PCRTest> ListAllFromGui(DateTime? dateFrom, string timeFrom,DateTime? dateTo, string timeTo)
+        {
+            // 1) Validácia vstupov
+            if (dateFrom is null) throw new InvalidOperationException("Zvoľ počiatočný dátum.");
+            if (dateTo is null) throw new InvalidOperationException("Zvoľ koncový dátum.");
+
+            var fromTs = ParseTime(timeFrom);
+            var toTs = ParseTime(timeTo);
+
+            var from = dateFrom.Value.Date + fromTs;
+            var to = dateTo.Value.Date + toTs;
+
+            if (to < from)
+                throw new InvalidOperationException("Dátum/čas 'Do' musí byť ≥ 'Od'.");
+
+            // 2) View → Model
+            var (ok, error, tests) = _view.ListAllPeriod(from, to);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 3) Výstup pre DataGrid (prípadne zoradenie podľa dátumu)
+            return (tests ?? Array.Empty<PCRTest>())
+                .OrderBy(t => t.DateStartTest)
+                .ToList();
+        }
+        public IReadOnlyList<Person> ListSickByDistrictAtDateFromGui(DateTime? atDate, string atTime,string districtText,string xDaysText)
+        {
+            // 1) Validácia a parsovanie vstupov
+            if (atDate is null) throw new InvalidOperationException("Zvoľ dátum.");
+
+            var atTs = ParseTime(atTime); // používa existujúci helper HH:mm
+            var at = atDate.Value.Date + atTs;
+
+            // kód okresu 1..79
+            int district = ParseIntInRange(districtText, 1, 79, "Kód okresu musí byť v intervale 1..79.");
+
+            // X dní: povoľme 1..365 (prípadne uprav podľa zadania)
+            int xDays = ParseIntInRange(xDaysText, 1, 365, "X dní musí byť v intervale 1..365.");
+
+            // 2) Delegácia na View → Model
+            var (ok, error, persons) = _view.ListSickByDistrictAtDate(at, district, xDays);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 3) Výsledok pre tabuľku „Osoby“ (prípadné zoradenie ak chceš)
+            return persons ?? Array.Empty<Person>();
+        }
+        public IReadOnlyList<(Person Person, PCRTest Test)> ListSickByDistrictAtDateSortedWithTestFromGui(
+            DateTime? atDate, string atTime,
+            string districtText,
+            string xDaysText)
+        {
+            // 1) Validácia a parsovanie
+            if (atDate is null) throw new InvalidOperationException("Zvoľ dátum.");
+            var atTs = ParseTime(atTime);                 // existujúci helper HH:mm
+            var at = atDate.Value.Date + atTs;
+
+            int district = ParseIntInRange(districtText, 1, 79, "Kód okresu musí byť v intervale 1..79.");
+            int xDays = ParseIntInRange(xDaysText, 1, 365, "X dní musí byť v intervale 1..365.");
+
+            // 2) View → Model: potrebujeme osoby aj ich „referenčný“ pozitívny test
+            var (ok, error, pairs) = _view.ListSickByDistrictAtDateWithTest(at, district, xDays);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 3) Zoradenie podľa hodnoty testu (desc), pri zhode podľa času testu (desc)
+            return (pairs ?? Array.Empty<(Person Person, PCRTest Test)>())
+                .OrderByDescending(p => p.Test.ValueOfTest)
+                .ThenByDescending(p => p.Test.DateStartTest)
+                .ToList();
+        }
+        public Person AddPersonFromGui(string firstName, string lastName, DateTime? birthDate)
+        {
+            // 1) Validácia vstupov
+            if (string.IsNullOrWhiteSpace(firstName))
+                throw new InvalidOperationException("Zadaj krstné meno.");
+
+            if (string.IsNullOrWhiteSpace(lastName))
+                throw new InvalidOperationException("Zadaj priezvisko.");
+
+            if (birthDate is null)
+                throw new InvalidOperationException("Zvoľ dátum narodenia.");
+
+            var birth = birthDate.Value.Date;
+            var fn = firstName.Trim();
+            var ln = lastName.Trim();
+
+            // 2) Vytvorme rozumnú náhodnú váhu (rovnaká logika ako v seedovaní)
+            double weight = Math.Round(_rnd.NextDouble() * 100.0, 2, MidpointRounding.AwayFromZero);
+
+            // 3) View → Model
+            var (ok, error, person) = _view.AddPerson(fn, ln, birth, weight);
+            if (!ok) throw new InvalidOperationException(error ?? "Vloženie osoby zlyhalo.");
+
+            return person!;
+        }
+        public PCRTest FindPcrByCodeFromGui(string pcrCodeText)
+        {
+            if (!int.TryParse(pcrCodeText?.Trim(), out var code))
+                throw new InvalidOperationException("Kód PCR testu musí byť celé číslo.");
+
+            var (ok, error, test) = _view.FindPcrByCode(code);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadanie zlyhalo.");
+
+            return test!;
+        }
+
+        public PCRTest DeletePcrByCodeFromGui(string pcrCodeText)
+        {
+            if (!int.TryParse(pcrCodeText?.Trim(), out var code))
+                throw new InvalidOperationException("Kód PCR testu musí byť celé číslo.");
+
+            var (ok, error, deleted) = _view.DeletePcrByCode(code);
+            if (!ok) throw new InvalidOperationException(error ?? "Mazanie zlyhalo.");
+
+            return deleted!;
+        }
+        public bool DeletePersonWithTestsFromGui(string personIdText)
+        {
+            if (string.IsNullOrWhiteSpace(personIdText))
+                throw new InvalidOperationException("Zadaj unikátne ID/rodné číslo pacienta.");
+
+            var personId = personIdText.Trim();
+
+            // View → Model: trvalé vymazanie osoby aj všetkých jej PCR testov
+            var (ok, _error) = _view.DeletePersonWithTests(personId);
+
+            // Ak chceš pri chybe zobraziť detailnú hlášku (a máš globálny try/catch v GUI),
+            // odkomentuj:
+            // if (!ok) throw new InvalidOperationException(_error ?? "Mazanie osoby zlyhalo.");
+
+            return ok;
+        }
+        public IReadOnlyList<PCRTest> ListAllByWorkplaceFromGui(DateTime? dateFrom, string timeFrom,DateTime? dateTo, string timeTo,string workCodeText)
+        {
+            if (dateFrom is null) throw new InvalidOperationException("Zvoľ počiatočný dátum.");
+            if (dateTo is null) throw new InvalidOperationException("Zvoľ koncový dátum.");
+
+            var fromTs = ParseTime(timeFrom);
+            var toTs = ParseTime(timeTo);
+
+            var from = dateFrom.Value.Date + fromTs;
+            var to = dateTo.Value.Date + toTs;
+
+            if (to < from)
+                throw new InvalidOperationException("Dátum/čas 'Do' musí byť ≥ 'Od'.");
+
+            // kód pracoviska: kladné celé číslo
+            int workCode = ParseIntInRange(workCodeText, 1, int.MaxValue, "Kód pracoviska musí byť kladné celé číslo.");
+
+            var (ok, error, tests) = _view.ListAllByWorkplacePeriod(from, to, workCode);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            return tests ?? Array.Empty<PCRTest>();
+        }
+        public IReadOnlyList<(int Region, int SickCount)> ListRegionsBySickCountAtDateFromGui(DateTime? atDate, string atTime, string xDaysText)
+        {
+            // 1) Validácia a parsovanie vstupov
+            if (atDate is null) throw new InvalidOperationException("Zvoľ dátum.");
+
+            var atTs = ParseTime(atTime); // existujúci helper HH:mm
+            var at = atDate.Value.Date + atTs;
+
+            // X dní povoľme napr. 1..365
+            int xDays = ParseIntInRange(xDaysText, 1, 365, "X dní musí byť v intervale 1..365.");
+
+            // 2) View → Model: vráť zoznam (regionCode, sickCount) k času 'at'
+            var (ok, error, rows) = _view.ListRegionsBySickCountAtDate(at, xDays);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 3) Zoradenie podľa počtu chorých (desc), pri zhode podľa kódu kraja (asc)
+            return (rows ?? Array.Empty<(int Region, int SickCount)>())
+                .OrderByDescending(r => r.SickCount)
+                .ThenBy(r => r.Region)
+                .ToList();
+        }
+        public IReadOnlyList<(int District, int SickCount)> ListDistrictsBySickCountAtDateFromGui(DateTime? atDate, string atTime, string xDaysText)
+        {
+            // 1) Validácia a parsovanie vstupov
+            if (atDate is null) throw new InvalidOperationException("Zvoľ dátum.");
+
+            var atTs = ParseTime(atTime); // HH:mm helper, ktorý už máš
+            var at = atDate.Value.Date + atTs;
+
+            // X dní povoľme napr. 1..365
+            int xDays = ParseIntInRange(xDaysText, 1, 365, "X dní musí byť v intervale 1..365.");
+
+            // 2) View → Model: vráť zoznam (districtCode, sickCount) k času 'at'
+            var (ok, error, rows) = _view.ListDistrictsBySickCountAtDate(at, xDays);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 3) Zoradenie podľa počtu chorých (desc), pri zhode podľa kódu okresu (asc)
+            return (rows ?? Array.Empty<(int District, int SickCount)>())
+                .OrderByDescending(r => r.SickCount)
+                .ThenBy(r => r.District)
+                .ToList();
+        }
+        public IReadOnlyList<Person> ListSickByRegionAtDateFromGui(DateTime? atDate, string atTime, string regionText,string xDaysText)
+        {
+            // 1) Validácia a parsovanie vstupov
+            if (atDate is null) throw new InvalidOperationException("Zvoľ dátum.");
+
+            var atTs = ParseTime(atTime);                 // HH:mm helper
+            var at = atDate.Value.Date + atTs;
+
+            int region = ParseIntInRange(regionText, 1, 8, "Kód kraja musí byť v intervale 1..8.");
+            int xDays = ParseIntInRange(xDaysText, 1, 365, "X dní musí byť v intervale 1..365.");
+
+            // 2) View → Model
+            var (ok, error, persons) = _view.ListSickByRegionAtDate(at, region, xDays);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 3) Výsledok pre tabuľku „Osoby“
+            return persons ?? Array.Empty<Person>();
+        }
+        public IReadOnlyList<Person> ListSickAllAtDateFromGui(DateTime? atDate, string atTime, string xDaysText)
+        {
+            // 1) Validácia a parsovanie vstupov
+            if (atDate is null) throw new InvalidOperationException("Zvoľ dátum.");
+
+            var atTs = ParseTime(atTime);                   // existujúci helper HH:mm
+            var at = atDate.Value.Date + atTs;
+            int xDays = ParseIntInRange(xDaysText, 1, 365, "X dní musí byť v intervale 1..365.");
+
+            // 2) View → Model
+            var (ok, error, persons) = _view.ListSickAllAtDate(at, xDays);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 3) Výsledok pre tabuľku „Osoby“
+            return persons ?? Array.Empty<Person>();
+        }
+        public IReadOnlyList<(Person Person, PCRTest Test)> ListTopSickPerDistrictAtDateFromGui(DateTime? atDate, string atTime, string xDaysText)
+        {
+            // 1) Validácia a parsovanie vstupov
+            if (atDate is null) throw new InvalidOperationException("Zvoľ dátum.");
+
+            var atTs = ParseTime(atTime);                   // existujúci helper HH:mm
+            var at = atDate.Value.Date + atTs;
+            int xDays = ParseIntInRange(xDaysText, 1, 365, "X dní musí byť v intervale 1..365.");
+
+            // 2) View → Model: potrebujeme všetkých „chorých“ s ich pozitívnym testom k času 'at'
+            //    (napr. posledný relevantný pozitívny test v okne X dní).
+            //    Očakávaný návrat: kolekcia párov (Person, PCRTest).
+            var (ok, error, pairs) = _view.ListSickAllAtDateWithTest(at, xDays);
+            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+
+            // 3) Vyber 1 najvyššiu hodnotu testu z každého okresu.
+            //    Pri zhode hodnoty testu uprednostni novší test; potom stabilne podľa ID osoby.
+            var topPerDistrict = (pairs ?? Array.Empty<(Person Person, PCRTest Test)>())
+                .GroupBy(p => p.Test.NumberOfDistrict)
+                .Select(g => g
+                    .OrderByDescending(x => x.Test.ValueOfTest)
+                    .ThenByDescending(x => x.Test.DateStartTest)
+                    .ThenBy(x => x.Person.UniqueNumber)
+                    .First())
+                .OrderBy(x => x.Test.NumberOfDistrict)
+                .ToList();
+
+            return topPerDistrict;
+        }
+        public string SaveAllToFileInAppRoot()
+        {
+            var (ok, error, path) = _view.SaveAllToFileInAppRoot();
+            if (!ok) throw new InvalidOperationException(error ?? "Ukladanie zlyhalo.");
+            return path!;
+        }
+        public (int persons, int tests) LoadAllFromFolderFromGui(string folderPath, bool clearExisting = true)
+        {
+            var (ok, error, result) = _view.LoadAllFromFolder(folderPath, clearExisting);
+            if (!ok) throw new InvalidOperationException(error ?? "Načítanie dát zo zložky zlyhalo.");
+            return result!.Value; // (persons, tests)
+        }
+
     }
 }

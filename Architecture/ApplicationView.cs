@@ -106,6 +106,235 @@ namespace SemestralnaPracaAUS2.Architecture
             }
         }
 
+        public (bool ok, string? error, IReadOnlyList<PCRTest>? tests)ListPositiveByRegionPeriod(DateTime from, DateTime to, int region)
+        {
+            try
+            {
+                var tests = _model.ListPositiveByRegionPeriod(from, to, region);
+                return (true, null, tests);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, IReadOnlyList<PCRTest>? tests)
+            ListPositiveAllPeriod(DateTime from, DateTime to)
+        {
+            try
+            {
+                var tests = _model.ListPositiveAllPeriod(from, to);
+                return (true, null, tests);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+
+        public (bool ok, string? error, IReadOnlyList<PCRTest>? tests)
+            ListAllByRegionPeriod(DateTime from, DateTime to, int region)
+        {
+            try
+            {
+                var tests = _model.ListAllByRegionPeriod(from, to, region);
+                return (true, null, tests);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, IReadOnlyList<PCRTest>? tests) ListAllPeriod(DateTime from, DateTime to)
+        {
+            try
+            {
+                var tests = _model.ListAllPeriod(from, to);
+                return (true, null, tests);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, IReadOnlyList<Person>? persons)
+            ListSickByDistrictAtDate(DateTime at, int district, int xDays)
+        {
+            try
+            {
+                var persons = _model.ListSickByDistrictAtDate(at, district, xDays);
+                return (true, null, persons);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, IReadOnlyList<(Person Person, PCRTest Test)>? pairs)ListSickByDistrictAtDateWithTest(DateTime at, int district, int xDays)
+        {
+            try
+            {
+                var pairs = _model.ListSickByDistrictAtDateWithTest(at, district, xDays);
+                return (true, null, pairs);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, Person? person)
+            AddPerson(string firstName, string lastName, DateTime birthDate, double weight)
+        {
+            try
+            {
+                var person = _model.AddPerson(firstName, lastName, birthDate, weight);
+                return (true, null, person);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, PCRTest? test)
+            FindPcrByCode(int code)
+        {
+            try
+            {
+                var test = _model.FindPcrByCode(code);
+                return (true, null, test);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, PCRTest? deleted)
+            DeletePcrByCode(int code)
+        {
+            try
+            {
+                var deleted = _model.DeletePcrByCode(code);
+                return (true, null, deleted);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error) DeletePersonWithTests(string personId)
+        {
+            try
+            {
+                _model.DeletePersonWithTests(personId);
+                return (true, null);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+        public (bool ok, string? error, IReadOnlyList<PCRTest>? tests)
+            ListAllByWorkplacePeriod(DateTime from, DateTime to, int workCode)
+        {
+            try
+            {
+                var tests = _model.ListAllByWorkplacePeriod(from, to, workCode);
+                return (true, null, tests);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, IReadOnlyList<(int Region, int SickCount)>? rows)
+            ListRegionsBySickCountAtDate(DateTime at, int xDays)
+        {
+            try
+            {
+                var rows = _model.ListRegionsBySickCountAtDate(at, xDays);
+                return (true, null, rows);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, IReadOnlyList<(int District, int SickCount)>? rows)
+            ListDistrictsBySickCountAtDate(DateTime at, int xDays)
+        {
+            try
+            {
+                var rows = _model.ListDistrictsBySickCountAtDate(at, xDays);
+                return (true, null, rows);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, IReadOnlyList<Person>? persons)
+            ListSickByRegionAtDate(DateTime at, int region, int xDays)
+        {
+            try
+            {
+                var persons = _model.ListSickByRegionAtDate(at, region, xDays);
+                return (true, null, persons);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, IReadOnlyList<Person>? persons)
+            ListSickAllAtDate(DateTime at, int xDays)
+        {
+            try
+            {
+                var persons = _model.ListSickAllAtDate(at, xDays);
+                return (true, null, persons);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, IReadOnlyList<(Person Person, PCRTest Test)>? pairs)
+            ListSickAllAtDateWithTest(DateTime at, int xDays)
+        {
+            try
+            {
+                var pairs = _model.ListSickAllAtDateWithTest(at, xDays);
+                return (true, null, pairs);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, string? path) SaveAllToFileInAppRoot()
+        {
+            try
+            {
+                var path = _model.SaveAllToFileInAppRoot();
+                return (true, null, path);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, (int persons, int tests)? result)LoadAllFromFolder(string folderPath, bool clearExisting = true)
+        {
+            try
+            {
+                var (persons, tests) = _model.LoadAllFromFolder(folderPath, clearExisting);
+                return (true, null, (persons, tests));
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
         public readonly record struct PcrInputDto(
             DateTime DateStartTest,
             int NumberOfDistrict,

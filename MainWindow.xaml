@@ -446,6 +446,614 @@
              ToolTip="Celé číslo – kód okresu"/>
                 </Grid>
 
+                <Grid x:Name="task6Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- datum od -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- datum do -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kod kraja -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="Pozitívne testy – časové obdobie a kraj" FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum od -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum od:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpPosKrajFrom" Grid.Column="0"/>
+                        <TextBox   x:Name="tbPosKrajFromTime" Grid.Column="1" Width="70" Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- Dátum do -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Dátum do:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="2" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpPosKrajTo" Grid.Column="0"/>
+                        <TextBox   x:Name="tbPosKrajToTime" Grid.Column="1" Width="70" Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 23:59)"/>
+                    </Grid>
+
+                    <!-- Kód kraja -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Kód kraja:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   x:Name="tbPosKrajRegion" Grid.Row="3" Grid.Column="1" ToolTip="Celé číslo – kód kraja"/>
+                </Grid>
+
+                <Grid x:Name="task7Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- datum od -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- datum do -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kod kraja -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Všetky testy – časové obdobie a kraj"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum od -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum od:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpAllKrajFrom" Grid.Column="0"/>
+                        <TextBox   x:Name="tbAllKrajFromTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- Dátum do -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Dátum do:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="2" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpAllKrajTo" Grid.Column="0"/>
+                        <TextBox   x:Name="tbAllKrajToTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 23:59)"/>
+                    </Grid>
+
+                    <!-- Kód kraja -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Kód kraja:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   x:Name="tbAllKrajRegion" Grid.Row="3" Grid.Column="1"
+             ToolTip="Celé číslo – kód kraja"/>
+                </Grid>
+
+                <Grid x:Name="task8Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum od -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum do -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Pozitívne testy – časové obdobie"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum od -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum od:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpPosAllFrom" Grid.Column="0"/>
+                        <TextBox   x:Name="tbPosAllFromTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- Dátum do -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Dátum do:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="2" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpPosAllTo" Grid.Column="0"/>
+                        <TextBox   x:Name="tbPosAllToTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 23:59)"/>
+                    </Grid>
+                </Grid>
+                
+                <Grid x:Name="task9Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum od -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum do -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Všetky testy – časové obdobie"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum od -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum od:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpAllFrom" Grid.Column="0"/>
+                        <TextBox   x:Name="tbAllFromTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- Dátum do -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Dátum do:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="2" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpAllTo" Grid.Column="0"/>
+                        <TextBox   x:Name="tbAllToTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 23:59)"/>
+                    </Grid>
+                </Grid>
+
+                <Grid x:Name="task10Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kód okresu -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- X dní -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Chorí v okrese k dátumu"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum kedy sa vyhodnocuje stav -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpSickOkresDate" Grid.Column="0"/>
+                        <TextBox   x:Name="tbSickOkresTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- Kód okresu -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Kód okresu:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox   Grid.Row="2" Grid.Column="1" x:Name="tbSickOkresDistrict"
+             ToolTip="Celé číslo – kód okresu"/>
+
+                    <!-- X dní od pozitívneho testu -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="X dní choroby:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="3" Grid.Column="1" x:Name="tbSickOkresXDays"
+             ToolTip="Celé číslo – koľko dní po pozitívnom teste je osoba považovaná za chorú"/>
+                </Grid>
+
+                <Grid x:Name="task11Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kód okresu -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- X dní -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Chorí v okrese k dátumu (zoradení podľa hodnoty testu)"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum/čas k vyhodnoteniu -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpSickOkresSortedDate" Grid.Column="0"/>
+                        <TextBox   x:Name="tbSickOkresSortedTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- Kód okresu -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Kód okresu:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox   x:Name="tbSickOkresSortedDistrict" Grid.Row="2" Grid.Column="1"
+             ToolTip="Celé číslo – kód okresu"/>
+
+                    <!-- X dní od pozitívneho testu -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="X dní choroby:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   x:Name="tbSickOkresSortedXDays" Grid.Row="3" Grid.Column="1"
+             ToolTip="Celé číslo – koľko dní po pozitívnom teste je osoba považovaná za chorú"/>
+                </Grid>
+
+                <Grid x:Name="task12Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kód kraja -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- X dní -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Chorí v kraji k dátumu"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum/čas vyhodnotenia -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpSickRegionDate" Grid.Column="0"/>
+                        <TextBox   x:Name="tbSickRegionTime" Grid.Column="1" Width="70" Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- Kód kraja -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Kód kraja:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox   Grid.Row="2" Grid.Column="1" x:Name="tbSickRegionCode" ToolTip="Celé číslo – kód kraja"/>
+
+                    <!-- X dní od pozitívneho testu -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="X dní choroby:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="3" Grid.Column="1" x:Name="tbSickRegionXDays" ToolTip="Koľko dní po pozitívnom teste je osoba považovaná za chorú"/>
+                </Grid>
+
+                <Grid x:Name="task13Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- X dní -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Chorí k zadanému dátumu"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum/čas vyhodnotenia -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpSickAllDate" Grid.Column="0"/>
+                        <TextBox   x:Name="tbSickAllTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- X dní -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="X dní choroby:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="2" Grid.Column="1" x:Name="tbSickAllXDays"
+             ToolTip="Koľko dní po pozitívnom teste je osoba považovaná za chorú"/>
+                </Grid>
+
+                <Grid x:Name="task14Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- X dní -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Najvyššia hodnota testu – 1 osoba z každého okresu"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum/čas vyhodnotenia -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpTopSickPerDistrictDate" Grid.Column="0"/>
+                        <TextBox   x:Name="tbTopSickPerDistrictTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- X dní od pozitívneho testu -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="X dní choroby:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="2" Grid.Column="1" x:Name="tbTopSickPerDistrictXDays"
+             ToolTip="Počet dní po pozitívnom teste, počas ktorých je osoba považovaná za chorú"/>
+                </Grid>
+
+                <Grid x:Name="task15Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- X dní -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Okresy podľa počtu chorých k dátumu"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum/čas vyhodnotenia -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpSickDistrictsDate" Grid.Column="0"/>
+                        <TextBox   x:Name="tbSickDistrictsTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- X dní -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="X dní choroby:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="2" Grid.Column="1" x:Name="tbSickDistrictsXDays"
+             ToolTip="Koľko dní po pozitívnom teste je osoba považovaná za chorú"/>
+                </Grid>
+
+                <Grid x:Name="task16Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- X dní -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Kraje podľa počtu chorých k dátumu"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum/čas vyhodnotenia -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpSickRegionsDate" Grid.Column="0"/>
+                        <TextBox   x:Name="tbSickRegionsTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- X dní -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="X dní choroby:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="2" Grid.Column="1" x:Name="tbSickRegionsXDays"
+             ToolTip="Koľko dní po pozitívnom teste je osoba považovaná za chorú"/>
+                </Grid>
+
+                <Grid x:Name="task17Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum od -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum do -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kód pracoviska -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Všetky testy – časové obdobie a pracovisko"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Dátum od -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Dátum od:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpAllWorkFrom" Grid.Column="0"/>
+                        <TextBox   x:Name="tbAllWorkFromTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
+                    </Grid>
+
+                    <!-- Dátum do -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Dátum do:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <Grid Grid.Row="2" Grid.Column="1" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <DatePicker x:Name="dpAllWorkTo" Grid.Column="0"/>
+                        <TextBox   x:Name="tbAllWorkToTime" Grid.Column="1" Width="70"
+               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 23:59)"/>
+                    </Grid>
+
+                    <!-- Kód pracoviska -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Kód pracoviska:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   x:Name="tbAllWorkPlaceCode" Grid.Row="3" Grid.Column="1"
+             ToolTip="Zadaj kód pracoviska"/>
+                </Grid>
+
+                <Grid x:Name="task18Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kód PCR -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Vyhľadanie PCR testu podľa kódu"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Kód PCR testu:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="1" Grid.Column="1" x:Name="tbFindOnlyPcrCode"
+             ToolTip="Zadaj kód PCR testu"/>
+                </Grid>
+
+                <Grid x:Name="task19Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- meno -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- priezvisko -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- dátum nar. -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- info -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Vloženie osoby do systému"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Meno:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox   Grid.Row="1" Grid.Column="1" x:Name="tbAddFirstName" Margin="0,0,0,12"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Priezvisko:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox   Grid.Row="2" Grid.Column="1" x:Name="tbAddLastName" Margin="0,0,0,12"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Dátum narodenia:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <DatePicker Grid.Row="3" Grid.Column="1" x:Name="dpAddBirth" Margin="0,0,0,12"/>
+
+                    <TextBlock Grid.Row="4" Grid.ColumnSpan="2" Opacity="0.7"
+             Text="Unikátne číslo pacienta pridelí systém automaticky."/>
+                </Grid>
+                
+                <Grid x:Name="task20Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kód PCR -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- upozornenie -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Vymazanie PCR testu podľa kódu"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Kód PCR testu:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="1" Grid.Column="1" x:Name="tbDeletePcrCode"
+             ToolTip="Zadaj kód PCR testu, ktorý chceš vymazať"/>
+
+                    <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Foreground="#B00020" Opacity=".9" Margin="0,6,0,0"
+             Text="Pozor: operácia je trvalá a nevratná. (Potvrdenie prebehne v Controlleri.)"/>
+                </Grid>
+
+                <Grid x:Name="task21Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- ID/rodné číslo -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- upozornenie -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Vymazanie osoby zo systému"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="ID/rodné číslo pacienta:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="1" Grid.Column="1" x:Name="tbDeletePersonId"
+             ToolTip="Zadaj unikátne číslo (alebo rodné číslo) pacienta"/>
+
+                    <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Foreground="#B00020" Opacity=".9" Margin="0,6,0,0"
+             Text="Pozor: operácia je trvalá a nevratná. Odstránia sa aj všetky jeho PCR testy."/>
+                </Grid>
 
                 <!-- rozťahovač pre odtlačenie prípadných budúcich prvkov dole -->
                 <StackPanel.Height>
@@ -476,14 +1084,63 @@
             <TabControl Grid.Row="1" x:Name="tabLists" Margin="8">
                 <TabItem Header="Osoby">
                     <DataGrid x:Name="dgPersons"
-                      AutoGenerateColumns="True"
-                      IsReadOnly="True"
-                      CanUserAddRows="False"
-                      EnableRowVirtualization="True"
-                      EnableColumnVirtualization="True"
-                      SelectionMode="Extended"
-                      Margin="0"
-                      AlternationCount="2"/>
+          AutoGenerateColumns="False"
+          IsReadOnly="True"
+          CanUserAddRows="False"
+          EnableRowVirtualization="True"
+          EnableColumnVirtualization="True"
+          SelectionMode="Extended"
+          Margin="0"
+          AlternationCount="2"
+          RowDetailsVisibilityMode="VisibleWhenSelected">
+
+                        <!-- Stĺpce: vlastnosti osoby -->
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID pacienta" Binding="{Binding Person.UniqueNumber}" Width="140"/>
+                            <DataGridTextColumn Header="Meno"        Binding="{Binding Person.FirstName}"   Width="*"/>
+                            <DataGridTextColumn Header="Priezvisko"  Binding="{Binding Person.LastName}"    Width="*"/>
+                            <DataGridTextColumn Header="Dátum nar."  Binding="{Binding Person.Birth, StringFormat=\{0:yyyy-MM-dd\}}" Width="140"/>
+                        </DataGrid.Columns>
+
+                        <!-- Detaily riadku: referenčný PCR test tejto osoby (zobrazí sa po označení riadku) -->
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,4,0,8" Padding="8" BorderBrush="#DDD" BorderThickness="1" Background="#FAFAFA" CornerRadius="4">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="PCR kód:" FontWeight="SemiBold" Margin="0,0,8,4"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Test.UniqueNumberPCR}"/>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Dátum testu:" FontWeight="SemiBold" Margin="16,0,8,4"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding Test.DateStartTest, StringFormat=\{0:yyyy-MM-dd HH:mm\}}"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Pozitívny:" FontWeight="SemiBold" Margin="0,0,8,4"/>
+                                        <CheckBox  Grid.Row="1" Grid.Column="1" IsChecked="{Binding Test.ResultOfTest}" IsEnabled="False"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="2" Text="Hodnota:" FontWeight="SemiBold" Margin="16,0,8,4"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding Test.ValueOfTest}"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Okres:" FontWeight="SemiBold" Margin="0,0,8,0"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Test.NumberOfDistrict}"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="2" Text="Kraj:" FontWeight="SemiBold" Margin="16,0,8,0"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding Test.NumberOfRegion}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
+                    </DataGrid>
                 </TabItem>
                 <TabItem Header="PCR testy">
                     <DataGrid x:Name="dgPcrs"
@@ -495,6 +1152,89 @@
                       SelectionMode="Extended"
                       Margin="0"
                       AlternationCount="2"/>
+                </TabItem>
+                <TabItem Header="Kraje">
+                    <!-- Horná mriežka krajov, detail riadku = testy tohto kraja -->
+                    <DataGrid x:Name="dgRegions"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        CanUserAddRows="False"
+                        EnableRowVirtualization="True"
+                        EnableColumnVirtualization="True"
+                        SelectionMode="Extended"
+                        Margin="0"
+                        AlternationCount="2"
+                        RowDetailsVisibilityMode="VisibleWhenSelected">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Kraj" Binding="{Binding Item1}" />
+                            <DataGridTextColumn Header="Počet chorých" Binding="{Binding Item2}" />
+                        </DataGrid.Columns>
+
+
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,4,0,8" Padding="8" BorderBrush="#DDD" BorderThickness="1" Background="#FAFAFA" CornerRadius="4">
+                                    <!-- Vnorená mriežka so zoznamom testov pre daný kraj -->
+                                    <DataGrid ItemsSource="{Binding Tests}"
+                    AutoGenerateColumns="False"
+                    IsReadOnly="True"
+                    CanUserAddRows="False"
+                    HeadersVisibility="Column"
+                    Margin="0">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="PCR kód"     Binding="{Binding UniqueNumberPCR}" Width="120"/>
+                                            <DataGridTextColumn Header="Dátum testu" Binding="{Binding DateStartTest, StringFormat=\{0:yyyy-MM-dd HH:mm\}}" Width="160"/>
+                                            <DataGridCheckBoxColumn Header="Pozitívny" Binding="{Binding ResultOfTest}" Width="100"/>
+                                            <DataGridTextColumn Header="Hodnota"     Binding="{Binding ValueOfTest}" Width="100"/>
+                                            <DataGridTextColumn Header="Okres"       Binding="{Binding NumberOfDistrict}" Width="80"/>
+                                            <DataGridTextColumn Header="Kraj"        Binding="{Binding NumberOfRegion}"  Width="80"/>
+                                            <DataGridTextColumn Header="Poznámka"    Binding="{Binding Note}" Width="2*"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Border>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
+                    </DataGrid>
+                </TabItem>
+                <TabItem Header="Okresy">
+                    <DataGrid x:Name="dgDistricts"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        CanUserAddRows="False"
+                        EnableRowVirtualization="True"
+                        EnableColumnVirtualization="True"
+                        SelectionMode="Extended"
+                        Margin="0"
+                        AlternationCount="2"
+                        RowDetailsVisibilityMode="VisibleWhenSelected">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Okres" Binding="{Binding Item1}"/>
+                            <DataGridTextColumn Header="Počet chorých" Binding="{Binding Item2}" />
+                        </DataGrid.Columns>
+
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,4,0,8" Padding="8" BorderBrush="#DDD" BorderThickness="1" Background="#FAFAFA" CornerRadius="4">
+                                    <DataGrid ItemsSource="{Binding Tests}"
+                    AutoGenerateColumns="False"
+                    IsReadOnly="True"
+                    CanUserAddRows="False"
+                    HeadersVisibility="Column"
+                    Margin="0">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn   Header="PCR kód"     Binding="{Binding UniqueNumberPCR}" Width="120"/>
+                                            <DataGridTextColumn   Header="Dátum testu" Binding="{Binding DateStartTest, StringFormat=\{0:yyyy-MM-dd HH:mm\}}" Width="160"/>
+                                            <DataGridCheckBoxColumn Header="Pozitívny" Binding="{Binding ResultOfTest}" Width="100"/>
+                                            <DataGridTextColumn   Header="Hodnota"     Binding="{Binding ValueOfTest}" Width="100"/>
+                                            <DataGridTextColumn   Header="Okres"       Binding="{Binding NumberOfDistrict}" Width="80"/>
+                                            <DataGridTextColumn   Header="Kraj"        Binding="{Binding NumberOfRegion}"  Width="80"/>
+                                            <DataGridTextColumn   Header="Poznámka"    Binding="{Binding Note}" Width="2*"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Border>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
+                    </DataGrid>
                 </TabItem>
             </TabControl>
 
