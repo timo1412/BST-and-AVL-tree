@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace SemestralnaPracaAUS2.Structures
@@ -21,7 +22,7 @@ namespace SemestralnaPracaAUS2.Structures
                 return true;
             }
 
-            var path = new Stack<StackNode>();
+            //var path = new Stack<StackNode>();
             Node? curr = root;
             Node? parent = null;
             bool lastStepLeft = false;
@@ -35,65 +36,77 @@ namespace SemestralnaPracaAUS2.Structures
                 if (cmp < 0)
                 {
                     // pôjdeme doľava
-                    path.Push(new StackNode(A(parent)!, left: true));
+                    //path.Push(new StackNode(A(parent)!, left: true));
                     lastStepLeft = true;
                     curr = curr.Left;
                 }
                 else
                 {
                     // pôjdeme doprava
-                    path.Push(new StackNode(A(parent)!, left: false));
+                    //path.Push(new StackNode(A(parent)!, left: false));
                     lastStepLeft = false;
                     curr = curr.Right;
                 }
             }
 
-            // vloženie nového uzla pod parent
+            // 2) Vloženie nového uzla
             var newNode = (AvlNode)NewNode(value, parent);
             if (lastStepLeft) parent!.Left = newNode;
             else parent!.Right = newNode;
             count++;
 
-            while (path.Count > 0)
+            // 3) Rebalans bez zásobníka – kráčame hore cez Parent
+            var child = A(newNode)!;
+            var node = A(newNode.Parent);
+
+            while (node != null)
             {
-                var frame = path.Pop();
-                frame.Node.Balance += frame.Left ? -1 : +1;
+                // aktualizácia BF podľa toho, kam sme práve vložili/skrátka rástli
+                if (child == node.Left) node.Balance -= 1;  // ľavá vetva narástla
+                else node.Balance += 1;                     // pravá vetva narástla
 
-                if (frame.Node.Balance == 0)
-                {
+                // a) po aktualizácii BF je 0 → výška podstromu sa nezmenila, končíme
+                if (node.Balance == 0)
                     break;
-                }
 
-                if (frame.Node.Balance == -1 || frame.Node.Balance == +1)
+                // b) BF je ±1 → výška tohto uzla narástla o 1, pokračujeme k predkovi
+                if (node.Balance == -1 || node.Balance == +1)
                 {
+                    child = node;
+                    node = A(node.Parent);
                     continue;
                 }
 
-                if (frame.Node.Balance == -2)
+                // c) Prekročenie: BF == -2 alebo +2 → vykonaj rotáciu a končíme
+                if (node.Balance == -2)
                 {
-                    var left = A(frame.Node.Left);
+                    var left = A(node.Left);
                     if (left != null && left.Balance <= 0)
                     {
-                        RotateRight(frame.Node);
+                        // LL
+                        RotateRight(node);
                     }
                     else
                     {
-                        RotateLeftRight(frame.Node);
+                        // LR
+                        RotateLeftRight(node);
                     }
-                    break; 
+                    break; // po rotácii pri vkladaní končíme
                 }
-                else
+                else // node.Balance == +2
                 {
-                    var right = A(frame.Node.Right);
+                    var right = A(node.Right);
                     if (right != null && right.Balance >= 0)
                     {
-                        RotateLeft(frame.Node);
+                        // RR
+                        RotateLeft(node);
                     }
                     else
                     {
-                        RotateRightLeft(frame.Node);
+                        // RL
+                        RotateRightLeft(node);
                     }
-                    break;
+                    break; // po rotácii pri vkladaní končíme
                 }
             }
 
