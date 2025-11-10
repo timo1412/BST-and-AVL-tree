@@ -63,7 +63,27 @@ namespace SemestralnaPracaAUS2.Architecture
             var (ok, error) = _controller.InsertPcr(dto);
             if (!ok) throw new InvalidOperationException(error ?? "Neznáma chyba pri vkladaní PCR.");
         }
+        public PCRTest UpdatePcrFromGui(string codeText,string regionText,string districtText,bool resultBool,string valueText,string noteText)
+        {
+            // 1) Validácia a parsovanie vstupov z GUI
+            if (!int.TryParse(codeText?.Trim(), out var code))
+                throw new InvalidOperationException("Kód PCR testu musí byť celé číslo.");
 
+            int region = ParseIntInRange(regionText, 1, 8, "Kód kraja musí byť v intervale 1..8.");
+            int district = ParseIntInRange(districtText, 1, 79, "Kód okresu musí byť v intervale 1..79.");
+
+            double value = ParseDouble(valueText, "Hodnota testu musí byť číslo.");
+            value = Math.Round(value, 2, MidpointRounding.AwayFromZero);
+
+            var note = string.IsNullOrWhiteSpace(noteText) ? "NOTE" : noteText.Trim();
+
+            // 2) Delegácia na Controller (ten spraví zmenu v modeli a aktualizuje indexy)
+            var (ok, error, updated) = _controller.UpdatePcr(code, region, district, resultBool, value, note);
+            if (!ok) throw new InvalidOperationException(error ?? "Úprava PCR testu zlyhala.");
+
+            // 3) Návrat upraveného testu pre zobrazenie v tabuľke
+            return updated!;
+        }
         // ---------- Helpers ----------
         private static TimeSpan ParseTime(string hhmm)
         {
@@ -544,6 +564,24 @@ namespace SemestralnaPracaAUS2.Architecture
             var (ok, error, result) = _controller.LoadAllFromFolder(folderPath, clearExisting);
             if (!ok) throw new InvalidOperationException(error ?? "Načítanie dát zo zložky zlyhalo.");
             return result!.Value; // (persons, tests)
+        }
+        public PCRTest AssignPcrToPersonFromGui(string personIdText, string pcrCodeText)
+        {
+            // 1) Validácia vstupov z GUI
+            if (string.IsNullOrWhiteSpace(personIdText))
+                throw new InvalidOperationException("Zadaj unikátne ID/rodné číslo pacienta.");
+
+            if (!int.TryParse(pcrCodeText?.Trim(), out var pcrCode))
+                throw new InvalidOperationException("Kód PCR testu musí byť celé číslo.");
+
+            var personId = personIdText.Trim();
+
+            // 2) Delegácia na Controller (ten vykoná priradenie v modeli)
+            var (ok, error, updatedTest) = _controller.AssignPcrToPerson(personId, pcrCode);
+            if (!ok) throw new InvalidOperationException(error ?? "Priradenie testu k osobe zlyhalo.");
+
+            // 3) Vraciame aktualizovaný PCR test pre zobrazenie v tabuľke
+            return updatedTest!;
         }
     }
 }

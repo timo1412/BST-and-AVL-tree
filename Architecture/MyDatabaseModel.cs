@@ -42,6 +42,72 @@ namespace SemestralnaPracaAUS2.Model
             _idxByDistrictDate.Add(PcrByDistrictDate.Of(t));
             _idxByWorkplaceDate.Add(PcrByWorkplaceDate.Of(t));
         }
+        // v MyDatabaseModel
+        public PCRTest UpdatePcr(int code, int region, int district, bool result, double value, string note)
+        {
+            if (code <= 0)
+                throw new ArgumentOutOfRangeException(nameof(code), "Kód PCR testu musí byť kladné celé číslo.");
+            if (region < 1 || region > 8)
+                throw new ArgumentOutOfRangeException(nameof(region), "Kód kraja musí byť v intervale 1..8.");
+            if (district < 1 || district > 79)
+                throw new ArgumentOutOfRangeException(nameof(district), "Kód okresu musí byť v intervale 1..79.");
+
+            // 1) Nájdeme existujúci test podľa kódu
+            if (!_idxByCode.Find(PcrByCode.FromKey(code), out var wrap) || wrap.Value is null)
+                throw new InvalidOperationException($"PCR test s kódom {code} neexistuje.");
+
+            var old = wrap.Value;
+
+            // 2) Zistíme vlastníka (ak existuje)
+            Person? owner = null;
+            if (!string.IsNullOrEmpty(old.UniqueNumberPerson) &&
+                _idxPersonById.Find(PersonByUniqueNumber.FromKey(old.UniqueNumberPerson), out var ownerWrap) &&
+                ownerWrap.Value is Person p)
+            {
+                owner = p;
+            }
+
+            // 3) Vytvoríme NOVÚ inštanciu PCRTest podľa tvojho konštruktora
+            var updated = new PCRTest(
+                dateStartTest: old.DateStartTest,
+                numberOfDistrict: district,
+                numberOfRegion: region,
+                resultOfTest: result,
+                valueOfTest: value,
+                note: string.IsNullOrWhiteSpace(note) ? old.Note : note.Trim(),
+                uniqueNumberPerson: old.UniqueNumberPerson,
+                uniqueNumberPcr: old.UniqueNumberPCR,
+                uniqueNumberPcrPlace: old.UniqueNumberPCRPlace
+            );
+
+            // 4) Aktualizácia osobného stromu vlastníka
+            if (owner is not null)
+            {
+                owner.personPcrTests.Delete(PcrByCode.FromKey(old.UniqueNumberPCR));
+                owner.personPcrTests.Add(PcrByCode.Of(updated));
+            }
+
+            // 5) Aktualizácia všetkých globálnych indexov (remove -> add)
+            _idxByCode.Delete(PcrByCode.FromKey(old.UniqueNumberPCR));
+            _idxByCode.Add(PcrByCode.Of(updated));
+
+            _idxByPerson.Delete(PcrByPersonDate.Of(old));
+            _idxByPerson.Add(PcrByPersonDate.Of(updated));
+
+            _idxByDate.Delete(PcrByDate.Of(old));
+            _idxByDate.Add(PcrByDate.Of(updated));
+
+            _idxByRegionDate.Delete(PcrByRegionDate.Of(old));
+            _idxByRegionDate.Add(PcrByRegionDate.Of(updated));
+
+            _idxByDistrictDate.Delete(PcrByDistrictDate.Of(old));
+            _idxByDistrictDate.Add(PcrByDistrictDate.Of(updated));
+
+            _idxByWorkplaceDate.Delete(PcrByWorkplaceDate.Of(old));
+            _idxByWorkplaceDate.Add(PcrByWorkplaceDate.Of(updated));
+
+            return updated;
+        }
 
         public SeedResult SeedRandom(SeedRequest req)
         {
@@ -112,14 +178,7 @@ namespace SemestralnaPracaAUS2.Model
             }
             return new SeedResult(PersonsInserted: personsInserted, PcrInserted: pcrInserted);
         }
-        public PCRTest CreateAndAddPcrForPerson(
-            string personUniqueNumber,
-            DateTime dateStartTest,
-            int numberOfDistrict,
-            int numberOfRegion,
-            bool resultOfTest,
-            double valueOfTest,
-            string note)
+        public PCRTest CreateAndAddPcrForPerson(string personUniqueNumber,DateTime dateStartTest,int numberOfDistrict,int numberOfRegion,bool resultOfTest,double valueOfTest,string note)
         {
             if (string.IsNullOrWhiteSpace(personUniqueNumber)) throw new ArgumentNullException(nameof(personUniqueNumber));
 
@@ -1050,6 +1109,81 @@ namespace SemestralnaPracaAUS2.Model
 
             result.Add(sb.ToString());
             return result;
+        }
+
+        public PCRTest AssignPcrToPerson(string personId, int pcrCode)
+        {
+            if (string.IsNullOrWhiteSpace(personId))
+                throw new ArgumentNullException(nameof(personId));
+            if (pcrCode <= 0)
+                throw new ArgumentOutOfRangeException(nameof(pcrCode), "Kód PCR testu musí byť kladné celé číslo.");
+
+            // 1) Osoba podľa ID
+            if (!_idxPersonById.Find(PersonByUniqueNumber.FromKey(personId), out var personWrap) ||
+                personWrap.Value is null)
+                throw new InvalidOperationException($"Osoba s ID '{personId}' neexistuje.");
+
+            var newOwner = personWrap.Value;
+
+            // 2) Test podľa kódu (globálne)
+            if (!_idxByCode.Find(PcrByCode.FromKey(pcrCode), out var testWrap) ||
+                testWrap.Value is null)
+                throw new InvalidOperationException($"PCR test s kódom {pcrCode} neexistuje.");
+
+            var old = testWrap.Value;
+            var previousOwnerId = old.UniqueNumberPerson; // môže byť prázdne/nezadané
+
+            // 3) Vytvor NOVÝ test s novým vlastníkom podľa tvojho konštruktora
+            var updated = new PCRTest(
+                dateStartTest: old.DateStartTest,
+                numberOfDistrict: old.NumberOfDistrict,
+                numberOfRegion: old.NumberOfRegion,
+                resultOfTest: old.ResultOfTest,
+                valueOfTest: old.ValueOfTest,
+                note: old.Note,
+                uniqueNumberPerson: newOwner.UniqueNumber,   // ← priradenie osobe
+                uniqueNumberPcr: old.UniqueNumberPCR,
+                uniqueNumberPcrPlace: old.UniqueNumberPCRPlace
+            );
+
+            // 4) Aktualizácia indexov a stromov
+            // 4a) Globálny index podľa kódu
+            _idxByCode.Delete(PcrByCode.FromKey(pcrCode));
+            _idxByCode.Add(PcrByCode.Of(updated));
+            
+            // 4b) Odstráň zo stromu pôvodného vlastníka (ak existoval)
+            if (!string.IsNullOrEmpty(previousOwnerId) &&
+                _idxPersonById.Find(PersonByUniqueNumber.FromKey(previousOwnerId), out var prevWrap) &&
+                prevWrap.Value is Person prevOwner)
+            {
+                prevOwner.personPcrTests.Delete(PcrByCode.FromKey(pcrCode));
+            }
+
+            // podľa kódu
+            _idxByCode.Delete(PcrByCode.FromKey(old.UniqueNumberPCR));
+            _idxByCode.Add(PcrByCode.Of(updated));
+
+            // podľa (osoba + dátum)
+            _idxByPerson.Delete(PcrByPersonDate.Of(old));
+            _idxByPerson.Add(PcrByPersonDate.Of(updated));
+
+            // podľa dátumu
+            _idxByDate.Delete(PcrByDate.Of(old));
+            _idxByDate.Add(PcrByDate.Of(updated));
+
+            // podľa regiónu + dátumu
+            _idxByRegionDate.Delete(PcrByRegionDate.Of(old));
+            _idxByRegionDate.Add(PcrByRegionDate.Of(updated));
+
+            // podľa okresu + dátumu
+            _idxByDistrictDate.Delete(PcrByDistrictDate.Of(old));
+            _idxByDistrictDate.Add(PcrByDistrictDate.Of(updated));
+
+            // podľa pracoviska + dátumu (ak workplace môže byť null, ošetri to podľa implementácie wrappera)
+            _idxByWorkplaceDate.Delete(PcrByWorkplaceDate.Of(old));
+            _idxByWorkplaceDate.Add(PcrByWorkplaceDate.Of(updated));
+
+            return updated;
         }
     }
 }

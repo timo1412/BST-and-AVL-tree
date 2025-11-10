@@ -52,7 +52,6 @@ namespace SemestralnaPracaAUS2.TestData
             DateStartTest = dateStartTest;
             UniqueNumberPerson = uniqueNumberPerson ?? RandomId(5);
             UniqueNumberPCR = uniqueNumberPcr;
-            // accept nullable place; if null generate a random place id like the default ctor
             UniqueNumberPCRPlace = uniqueNumberPcrPlace ?? Rnd.Next(1, 20_000 + 1);
             NumberOfDistrict = numberOfDistrict;
             NumberOfRegion = numberOfRegion;

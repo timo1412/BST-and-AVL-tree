@@ -1,4 +1,6 @@
 ﻿using SemestralnaPracaAUS2.Interface;
+using SemestralnaPracaAUS2.Structures;
+using SemestralnaPracaAUS2.Wrappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,7 @@ namespace SemestralnaPracaAUS2.TestData
         public string FirstName { get; }
         public string LastName { get; }   
         public double Weight { get; }
+        public readonly AVLTree<PcrByCode> personPcrTests = new AVLTree<PcrByCode>();
         public string UniqueNumber { get; }
         private const string AllowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         public DateTime Birth { get; }
@@ -38,7 +41,6 @@ namespace SemestralnaPracaAUS2.TestData
         }
         private static string GenerateRandomString(int length)
         {
-            // Používame StringBuilder pre efektívne spájanie znakov
             var result = new System.Text.StringBuilder(length);
 
             for (int i = 0; i < length; i++)

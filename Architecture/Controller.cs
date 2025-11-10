@@ -325,6 +325,32 @@ namespace SemestralnaPracaAUS2.Architecture
                 return (false, ex.Message, null);
             }
         }
+        public (bool ok, string? error, PCRTest? updatedTest) AssignPcrToPerson(string personId, int pcrCode)
+        {
+            try
+            {
+                var updated = _model.AssignPcrToPerson(personId, pcrCode);
+
+                return (true, null, updated);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+        public (bool ok, string? error, PCRTest? updated) UpdatePcr(int code,int region,int district,bool result,double value,string note)
+        {
+            try
+            {
+                var updated = _model.UpdatePcr(code, region, district, result, value, note);
+                return (true, null, updated);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
+            }
+        }
+
         public readonly record struct PcrInputDto(
             DateTime DateStartTest,
             int NumberOfDistrict,

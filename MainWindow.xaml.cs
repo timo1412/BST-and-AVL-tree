@@ -120,6 +120,13 @@ namespace SemestralnaPracaAUS2
                 case 22:
                     ShowRandomFillForm();
                     break;
+                case 23: 
+                    ShowTask22Form();
+                    break;
+                case 24:
+                    ShowTask24Form();
+                    break;
+            
                 default:
                     try
                     {
@@ -278,10 +285,15 @@ namespace SemestralnaPracaAUS2
                     case 21:
                         HandleDeletePersonWithTests();
                         break;
-                    case 22:  // Náhodné naplnenie systému
+                    case 22:
                         HandleSeedSystem();
                         break;
-
+                    case 23:
+                        HandleAssignPcrToPerson();
+                        break;
+                    case 24:
+                        HandleUpdatePcr();
+                        break;
                     default:
                         MessageBox.Show("Táto operácia zatiaľ nie je implementovaná.", "Info",
                             MessageBoxButton.OK, MessageBoxImage.Information);
@@ -317,7 +329,14 @@ namespace SemestralnaPracaAUS2
             if (task19Form != null) task19Form.Visibility = Visibility.Collapsed;
             if (task20Form != null) task20Form.Visibility = Visibility.Collapsed;
             if (task21Form != null) task21Form.Visibility = Visibility.Collapsed;
+            if (task22Form != null) task22Form.Visibility = Visibility.Collapsed;
+            if (task23Form != null) task23Form.Visibility = Visibility.Collapsed;
             if (randomFillForm != null) randomFillForm.Visibility = Visibility.Collapsed;
+        }
+        private void ShowTask24Form()
+        {
+            HideAllTaskForms();
+            task23Form.Visibility = Visibility.Visible;
         }
         private void ShowTask14Form()
         {
@@ -424,6 +443,11 @@ namespace SemestralnaPracaAUS2
             HideAllTaskForms();
             task1Form.Visibility = Visibility.Visible;
         }
+        private void ShowTask22Form()
+        {
+            HideAllTaskForms();
+            task22Form.Visibility = Visibility.Visible;
+        }
         private void HandleDeletePersonWithTests()
         {
             var personIdText = tbDeletePersonId.Text; // raw vstup
@@ -444,6 +468,22 @@ namespace SemestralnaPracaAUS2
                 txtStatus.Text = "Osobu sa nepodarilo vymazať.";
                 LogToGui($"[DeletePerson] FAIL personId='{personIdText}'");
             }
+        }
+        private void HandleAssignPcrToPerson()
+        {
+            // raw vstupy z GUI – validáciu a logiku necháme na Controller
+            var personIdText = tbAssignPersonId.Text;
+            var pcrCodeText = tbAssignPcrCode.Text;
+
+            // Controller metóda vykoná priradenie a vráti aktualizovaný PCR test
+            var updatedTest = _view.AssignPcrToPersonFromGui(personIdText, pcrCodeText);
+
+            // ukáž výsledok v pravej tabuľke + status
+            dgPcrs.ItemsSource = new[] { updatedTest };
+            tabLists.SelectedIndex = 1; // „PCR testy“
+
+            txtStatus.Text = $"Test {updatedTest.UniqueNumberPCR} bol priradený osobe {updatedTest.UniqueNumberPerson}.";
+            LogToGui($"[AssignPCR] person='{personIdText}', pcr='{pcrCodeText}' → OK (now person={updatedTest.UniqueNumberPerson})");
         }
         private void HandleDeletePcrByCode()
         {
@@ -841,6 +881,24 @@ namespace SemestralnaPracaAUS2
                 positiveRatio: positiveRatio
             );
             // Controller už zobrazí MessageBox s výsledkom.
+        }
+        private void HandleUpdatePcr()
+        {
+            var codeText = tbEditPcrCode.Text;
+            var regionText = tbEditRegion.Text;
+            var districtText = tbEditDistrict.Text;
+            var resultBool = chkEditResult.IsChecked == true;
+            var valueText = tbEditValue.Text;
+            var noteText = tbEditNote.Text;
+
+             var updated = _view.UpdatePcrFromGui(codeText, regionText, districtText, resultBool, valueText, noteText);
+
+            // zobraz vpravo v tabuľke PCR testy
+            dgPcrs.ItemsSource = new[] { updated };
+            tabLists.SelectedIndex = 1;
+
+            txtStatus.Text = $"PCR test {codeText} bol upravený.";
+            LogToGui($"[UpdatePCR] code={codeText}, region={regionText}, district={districtText}, result={resultBool}, value={valueText}");
         }
         private void ConfigurePersonsGridForPerson()
         {

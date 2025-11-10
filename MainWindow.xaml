@@ -152,6 +152,14 @@
                     <ComboBoxItem x:Name="cmbRandomFill">
                         <TextBlock Text="Náhodné naplnenie systému — parametre"/>
                     </ComboBoxItem>
+                    
+                    <ComboBoxItem>
+                        <TextBlock Text="Priradenie PCR testu k osobe."/>
+                    </ComboBoxItem>
+
+                    <ComboBoxItem>
+                        <TextBlock Text="Úprava PCR testu."/>
+                    </ComboBoxItem>
                 </ComboBox>
 
                 <Button x:Name="btnNacitanieZoSuboru"
@@ -169,7 +177,6 @@
                         Content="Vykonať operáciu"
                         Height="36"
                         Click="BtnProcessOperation"/>
-
 
                 <Separator Margin="0,12,0,8"/>
 
@@ -1054,6 +1061,90 @@
                     <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Foreground="#B00020" Opacity=".9" Margin="0,6,0,0"
              Text="Pozor: operácia je trvalá a nevratná. Odstránia sa aj všetky jeho PCR testy."/>
                 </Grid>
+
+                <Grid x:Name="task22Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- ID pacienta -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kód PCR -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+               Text="Priradenie PCR testu k osobe"
+               FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="ID pacienta:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox   Grid.Row="1" Grid.Column="1" x:Name="tbAssignPersonId" Margin="0,0,0,12"
+               ToolTip="Unikátne číslo pacienta (napr. ABC123)"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Kód PCR testu:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="2" Grid.Column="1" x:Name="tbAssignPcrCode"
+               ToolTip="Celé číslo – kód PCR testu"/>
+                </Grid>
+                
+                <Grid x:Name="task23Form" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- titul -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kód PCR -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kód kraja -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- kód okresu -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- výsledok -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- hodnota -->
+                        <RowDefinition Height="Auto"/>
+                        <!-- poznámka -->
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+             Text="Úprava PCR testu"
+             FontWeight="SemiBold" Margin="0,0,0,8"/>
+
+                    <!-- Kód existujúceho PCR testu -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Kód PCR testu:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox   Grid.Row="1" Grid.Column="1" x:Name="tbEditPcrCode" Margin="0,0,0,12"
+             ToolTip="Celé číslo – kód existujúceho PCR testu"/>
+
+                    <!-- Kód kraja -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Kód kraja:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox   Grid.Row="2" Grid.Column="1" x:Name="tbEditRegion" Margin="0,0,0,12"
+             ToolTip="Celé číslo – kód kraja"/>
+
+                    <!-- Kód okresu -->
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Kód okresu:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox   Grid.Row="3" Grid.Column="1" x:Name="tbEditDistrict" Margin="0,0,0,12"
+             ToolTip="Celé číslo – kód okresu"/>
+
+                    <!-- Výsledok testu -->
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Pozitívny:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <CheckBox  Grid.Row="4" Grid.Column="1" x:Name="chkEditResult" Content="Áno" Margin="0,0,0,12"/>
+
+                    <!-- Hodnota testu -->
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Hodnota testu:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+                    <TextBox   Grid.Row="5" Grid.Column="1" x:Name="tbEditValue" Margin="0,0,0,12"
+             ToolTip="Číselná hodnota (double)"/>
+
+                    <!-- Poznámka -->
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Poznámka:" VerticalAlignment="Top" Margin="0,0,8,0"/>
+                    <TextBox   Grid.Row="6" Grid.Column="1" x:Name="tbEditNote" AcceptsReturn="True" Height="60" TextWrapping="Wrap"/>
+                </Grid>
+
+
 
                 <!-- rozťahovač pre odtlačenie prípadných budúcich prvkov dole -->
                 <StackPanel.Height>
