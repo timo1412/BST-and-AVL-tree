@@ -34,15 +34,11 @@ namespace SemestralnaPracaAUS2
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly MyDatabaseModel _model;
         private readonly ApplicationView _view;
-        private readonly ApplicationController _controller;
         public MainWindow()
         {
             InitializeComponent();
-            _model = new MyDatabaseModel();
-            _view = new ApplicationView(_model);
-            _controller = new ApplicationController(_view);
+            _view = new ApplicationView();
         }
         private int GetSelectedTaskIndex1Based()
         {
@@ -128,7 +124,7 @@ namespace SemestralnaPracaAUS2
                     try
                     {
                         // TODO: čítaj reálne hodnoty z GUI (TextBoxy/DatePickery)
-                        _controller.SeedSystemFromGui(
+                        _view.SeedSystemFromGui(
                             persons: 10,
                             pcrPerPerson: 5,
                             dateFrom: new DateTime(2018, 1, 1),
@@ -177,7 +173,7 @@ namespace SemestralnaPracaAUS2
                 {
                     var folder = System.IO.Path.GetDirectoryName(ofd.FileName)!;
 
-                    var (persons, tests) = _controller.LoadAllFromFolderFromGui(folder, clearExisting: true);
+                    var (persons, tests) = _view.LoadAllFromFolderFromGui(folder, clearExisting: true);
 
                     txtStatus.Text = $"Načítané osoby: {persons}, testy: {tests} z „{folder}“.";
                     LogToGui($"[LOAD] OK persons={persons}, tests={tests}, folder='{folder}'");
@@ -199,7 +195,7 @@ namespace SemestralnaPracaAUS2
         {
             try
             {
-                var path = _controller.SaveAllToFileInAppRoot();
+                var path = _view.SaveAllToFileInAppRoot();
                 txtStatus.Text = $"Dáta uložené do súboru: {path}";
                 LogToGui($"[SAVE] OK -> {path}");
             }
@@ -373,8 +369,6 @@ namespace SemestralnaPracaAUS2
             HideAllTaskForms();
             task17Form.Visibility = Visibility.Visible;
         }
-
-
         private void ShowTask11Form()
         {
             HideAllTaskForms();
@@ -434,7 +428,7 @@ namespace SemestralnaPracaAUS2
         {
             var personIdText = tbDeletePersonId.Text; // raw vstup
 
-            var ok = _controller.DeletePersonWithTestsFromGui(personIdText);
+            var ok = _view.DeletePersonWithTestsFromGui(personIdText);
 
             // UI reakcia – po zmazaní vyčisti tabuľky
             dgPersons.ItemsSource = null;
@@ -455,7 +449,7 @@ namespace SemestralnaPracaAUS2
         {
             var pcrCodeText = tbDeletePcrCode.Text; // raw vstup
 
-            var deleted = _controller.DeletePcrByCodeFromGui(pcrCodeText);
+            var deleted = _view.DeletePcrByCodeFromGui(pcrCodeText);
 
             // voliteľne ukáž zmazaný záznam vpravo (ako „potvrdenku“)
             dgPcrs.ItemsSource = new[] { deleted };
@@ -470,7 +464,7 @@ namespace SemestralnaPracaAUS2
             var lastName = tbAddLastName.Text;
             var birthDate = dpAddBirth.SelectedDate; // DateTime?
 
-            var person = _controller.AddPersonFromGui(firstName, lastName, birthDate);
+            var person = _view.AddPersonFromGui(firstName, lastName, birthDate);
 
             // zobraz novú osobu v tabuľke Osoby
             ConfigurePersonsGridForPerson();
@@ -484,7 +478,7 @@ namespace SemestralnaPracaAUS2
         {
             var pcrCodeText = tbFindOnlyPcrCode.Text; // raw vstup z GUI
 
-            var test = _controller.FindPcrByCodeFromGui(pcrCodeText);
+            var test = _view.FindPcrByCodeFromGui(pcrCodeText);
 
             // zobraz test v pravej tabuľke
             dgPcrs.ItemsSource = new[] { test };
@@ -501,7 +495,7 @@ namespace SemestralnaPracaAUS2
             var xDays = tbSickOkresSortedXDays.Text;        // string
 
             // Controller vráti dvojice (Person, PCRTest), už ZORADENÉ podľa hodnoty testu
-            var rows = _controller.ListSickByDistrictAtDateSortedWithTestFromGui(
+            var rows = _view.ListSickByDistrictAtDateSortedWithTestFromGui(
                 atDate, atTime, district, xDays);
             ConfigurePersonsGridForSickWithTest();
             dgPersons.ItemsSource = rows;     // << dáme do tabuľky „Osoby“
@@ -509,7 +503,6 @@ namespace SemestralnaPracaAUS2
             txtStatus.Text = "Chorí v okrese (zoradení podľa hodnoty testu) s referenčným testom.";
             LogToGui($"[SickByDistrictSorted] okres='{district}', at={atDate:yyyy-MM-dd} {atTime}, X={xDays}");
         }
-
         public sealed class DistrictSickRow
         {
             public int District { get; init; }
@@ -521,7 +514,7 @@ namespace SemestralnaPracaAUS2
             var atTime = tbSickRegionsTime.Text;
             var xDays = tbSickRegionsXDays.Text;
 
-            var rows = _controller.ListRegionsBySickCountAtDateFromGui(atDate, atTime, xDays);
+            var rows = _view.ListRegionsBySickCountAtDateFromGui(atDate, atTime, xDays);
 
             dgRegions.ItemsSource = null;
             dgRegions.Items.Clear();
@@ -541,7 +534,7 @@ namespace SemestralnaPracaAUS2
             var region = tbSickRegionCode.Text;         // string
             var xDays = tbSickRegionXDays.Text;        // string
 
-            var persons = _controller.ListSickByRegionAtDateFromGui(
+            var persons = _view.ListSickByRegionAtDateFromGui(
                 atDate, atTime,
                 region,
                 xDays
@@ -562,7 +555,7 @@ namespace SemestralnaPracaAUS2
             var atTime = tbSickAllTime.Text;         // string
             var xDays = tbSickAllXDays.Text;        // string
 
-            var persons = _controller.ListSickAllAtDateFromGui(atDate, atTime, xDays);
+            var persons = _view.ListSickAllAtDateFromGui(atDate, atTime, xDays);
 
             ConfigurePersonsGridForPerson();
 
@@ -579,7 +572,7 @@ namespace SemestralnaPracaAUS2
             var atTime = tbTopSickPerDistrictTime.Text;
             var xDays = tbTopSickPerDistrictXDays.Text;
 
-            var rows = _controller.ListTopSickPerDistrictAtDateFromGui(atDate, atTime, xDays);
+            var rows = _view.ListTopSickPerDistrictAtDateFromGui(atDate, atTime, xDays);
 
             // Ak controller vracia ValueTuple (Person,PCRTest), zabaľ ho:
             var viewRows = rows.Select(r => new SickWithTest(
@@ -600,7 +593,7 @@ namespace SemestralnaPracaAUS2
             var atTime = tbSickDistrictsTime.Text;         // string
             var xDays = tbSickDistrictsXDays.Text;        // string
 
-            var rows = _controller.ListDistrictsBySickCountAtDateFromGui(atDate, atTime, xDays);
+            var rows = _view.ListDistrictsBySickCountAtDateFromGui(atDate, atTime, xDays);
             dgDistricts.ItemsSource = null;
             dgDistricts.Items.Clear();
             dgDistricts.ItemsSource = rows
@@ -619,7 +612,7 @@ namespace SemestralnaPracaAUS2
             var timeTo = tbAllWorkToTime.Text;         // string
             var workCode = tbAllWorkPlaceCode.Text;      // string
 
-            var tests = _controller.ListAllByWorkplaceFromGui(
+            var tests = _view.ListAllByWorkplaceFromGui(
                 dateFrom, timeFrom,
                 dateTo, timeTo,
                 workCode
@@ -636,7 +629,7 @@ namespace SemestralnaPracaAUS2
             var district = tbSickOkresDistrict.Text;     // string
             var xDays = tbSickOkresXDays.Text;        // string
 
-            var persons = _controller.ListSickByDistrictAtDateFromGui(
+            var persons = _view.ListSickByDistrictAtDateFromGui(
                 atDate, atTime,
                 district,
                 xDays
@@ -656,7 +649,7 @@ namespace SemestralnaPracaAUS2
             var dateTo = dpAllTo.SelectedDate;   // DateTime?
             var timeTo = tbAllToTime.Text;       // string
 
-            var tests = _controller.ListAllFromGui(
+            var tests = _view.ListAllFromGui(
                 dateFrom, timeFrom,
                 dateTo, timeTo
             );
@@ -672,7 +665,7 @@ namespace SemestralnaPracaAUS2
             var dateTo = dpPosAllTo.SelectedDate;   // DateTime?
             var timeTo = tbPosAllToTime.Text;       // string
 
-            var tests = _controller.ListPositiveAllFromGui(
+            var tests = _view.ListPositiveAllFromGui(
                 dateFrom, timeFrom,
                 dateTo, timeTo
             );
@@ -689,7 +682,7 @@ namespace SemestralnaPracaAUS2
             var timeTo = tbAllKrajToTime.Text;        // string
             var region = tbAllKrajRegion.Text;        // string
 
-            var tests = _controller.ListAllByRegionFromGui(
+            var tests = _view.ListAllByRegionFromGui(
                 dateFrom, timeFrom,
                 dateTo, timeTo,
                 region
@@ -707,7 +700,7 @@ namespace SemestralnaPracaAUS2
             var timeTo = tbPosKrajToTime.Text;         // string
             var region = tbPosKrajRegion.Text;         // string
 
-            var tests = _controller.ListPositiveByRegionFromGui(
+            var tests = _view.ListPositiveByRegionFromGui(
                 dateFrom, timeFrom,
                 dateTo, timeTo,
                 region
@@ -725,7 +718,7 @@ namespace SemestralnaPracaAUS2
             var timeTo = tbAllOkresToTime.Text;         // string
             var district = tbAllOkresDistrict.Text;       // string
 
-            var tests = _controller.ListAllByDistrictFromGui(
+            var tests = _view.ListAllByDistrictFromGui(
                 dateFrom, timeFrom,
                 dateTo, timeTo,
                 district
@@ -744,7 +737,7 @@ namespace SemestralnaPracaAUS2
             var timeTo = tbPosOkresToTime.Text;           // string
             var district = tbPosOkresDistrict.Text;         // string
 
-            var tests = _controller.ListPositiveByDistrictFromGui(
+            var tests = _view.ListPositiveByDistrictFromGui(
                 dateFrom, timeFrom,
                 dateTo, timeTo,
                 district
@@ -760,7 +753,7 @@ namespace SemestralnaPracaAUS2
         {
             var personIdText = tbListPersonId.Text; // raw vstup
 
-            var tests = _controller.ListPcrForPersonFromGui(personIdText);
+            var tests = _view.ListPcrForPersonFromGui(personIdText);
 
             dgPcrs.ItemsSource = tests;   // zobraz do tabuľky PCR testy
             tabLists.SelectedIndex = 1;   // prepni na „PCR testy“
@@ -770,7 +763,7 @@ namespace SemestralnaPracaAUS2
         }
         private void HandleFindPcrForPerson()
         {
-            var (person, pcr) = _controller.FindPcrForPersonFromGui(
+            var (person, pcr) = _view.FindPcrForPersonFromGui(
                 tbFindPersonId.Text,
                 tbFindPcrCode.Text
             );
@@ -806,7 +799,7 @@ namespace SemestralnaPracaAUS2
         }
         private void HandleInsertPcr()
         {
-            _controller.InsertPcrFromGui(
+            _view.InsertPcrFromGui(
                 selectedDate: dpPcrDate.SelectedDate,
                 timeText: tbPcrTime.Text,
                 districtText: tbDistrictCode.Text,
@@ -827,7 +820,6 @@ namespace SemestralnaPracaAUS2
         // 2) Samostatná obsluha pre „Náhodné naplnenie systému“
         private void HandleSeedSystem()
         {
-            // POZOR: ak máš iné názvy prvkov, uprav tu:
             int persons = int.Parse(tbSeedPersons.Text);
             int pcrPerPerson = int.Parse(tbSeedPcrCount.Text);
             DateTime dateFrom = dpSeedFrom.SelectedDate ?? throw new InvalidOperationException("Zvoľ počiatočný dátum seeding-u.");
@@ -839,7 +831,7 @@ namespace SemestralnaPracaAUS2
                 System.Globalization.CultureInfo.InvariantCulture
             );
 
-            _controller.SeedSystemFromGui(
+            _view.SeedSystemFromGui(
                 persons: persons,
                 pcrPerPerson: pcrPerPerson,
                 dateFrom: dateFrom,
