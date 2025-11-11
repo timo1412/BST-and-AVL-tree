@@ -1,5 +1,4 @@
-﻿using SemestralnaPracaAUS2.Model;
-using SemestralnaPracaAUS2.TestData;
+﻿using SemestralnaPracaAUS2.TestData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -104,7 +103,6 @@ namespace SemestralnaPracaAUS2.Architecture
                 return (false, ex.Message, null);
             }
         }
-
         public (bool ok, string? error, IReadOnlyList<PCRTest>? tests)ListPositiveByRegionPeriod(DateTime from, DateTime to, int region)
         {
             try

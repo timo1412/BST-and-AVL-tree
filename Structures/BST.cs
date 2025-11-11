@@ -304,25 +304,37 @@ namespace SemestralnaPracaAUS2.Structures
             target.Left = null;
             target.Right = null;
         }
-        private void ClearChildrenTarget(Node target) 
+        protected static int Compare(T a, T b) => a.CompareTo(b);
+        public IEnumerable<T> InOrder()
         {
-            var parent = target.Parent;
-            if (target.Left != null && target.Right != null)
+            var stack = new Stack<Node>();
+            Node? curr = root;
+
+            while (curr != null || stack.Count > 0)
             {
-                //vynimka nemoze to nikdy nastat lebo musim mat bud minimalni alebo max prvok 
-            }
-            else if (target.Right != null)
-            {
-                var subTree = target.Right;
-                parent.Left = subTree;
-            }
-            else if(target.Left != null)
-            {
-                var subTree = target.Left;
-                parent.Right = subTree;
+                // choď čo najviac doľava
+                while (curr != null)
+                {
+                    stack.Push(curr);
+                    curr = curr.Left;
+                }
+
+                // navštív uzol
+                var n = stack.Pop();
+                yield return n.Value;
+
+                // a prejdime do pravého podstromu
+                curr = n.Right;
             }
         }
-        protected static int Compare(T a, T b) => a.CompareTo(b);
+
+        public List<T> InOrderList()
+        {
+            var result = new List<T>(count);
+            foreach (var v in InOrder())
+                result.Add(v);
+            return result;
+        }
         protected class Node 
         {
             public T Value;

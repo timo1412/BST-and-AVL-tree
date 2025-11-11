@@ -84,7 +84,6 @@ namespace SemestralnaPracaAUS2.Architecture
             // 3) Návrat upraveného testu pre zobrazenie v tabuľke
             return updated!;
         }
-        // ---------- Helpers ----------
         private static TimeSpan ParseTime(string hhmm)
         {
             if (string.IsNullOrWhiteSpace(hhmm))

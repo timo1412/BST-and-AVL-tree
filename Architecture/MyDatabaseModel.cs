@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static SemestralnaPracaAUS2.TestData.SeedContracts;
 
-namespace SemestralnaPracaAUS2.Model
+namespace SemestralnaPracaAUS2.Architecture
 {
     public sealed class MyDatabaseModel
     {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using SemestralnaPracaAUS2.Architecture;
 using SemestralnaPracaAUS2.Interface;
-using SemestralnaPracaAUS2.Model;
 using SemestralnaPracaAUS2.Structures;
 using SemestralnaPracaAUS2.TestData;
 using SemestralnaPracaAUS2.Tester;

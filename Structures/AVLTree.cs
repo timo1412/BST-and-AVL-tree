@@ -518,6 +518,36 @@ namespace SemestralnaPracaAUS2.Structures
                 rightSubTree.Balance = 0;
             }
         }
+        public IEnumerable<T> InOrder()
+        {
+            var stack = new Stack<Node>();
+            Node? curr = root;
+
+            while (curr != null || stack.Count > 0)
+            {
+                // choď čo najviac doľava
+                while (curr != null)
+                {
+                    stack.Push(curr);
+                    curr = curr.Left;
+                }
+
+                // navštív uzol
+                var n = stack.Pop();
+                yield return n.Value;
+
+                // a prejdime do pravého podstromu
+                curr = n.Right;
+            }
+        }
+
+        public List<T> InOrderList()
+        {
+            var result = new List<T>(count);
+            foreach (var v in InOrder())
+                result.Add(v);
+            return result;
+        }
         private struct StackNode
         {
             public AvlNode Node;   // uzol, z ktorého sme schádzali
