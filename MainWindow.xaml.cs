@@ -36,7 +36,25 @@ namespace SemestralnaPracaAUS2
         private readonly ApplicationView _view;
         public MainWindow()
         {
+
+            var avl = new AVLTree<Person>();
+            var repAvl = StructurePerfTester.Run(avl, incrementalKeys: true);
+
+            var bstRandom = new BST<Person>();
+            var repBstRand = StructurePerfTester.Run(bstRandom, incrementalKeys: false);
+
+            var bstIncremental = new BST<Person>();
+            //var repBstInc = StructurePerfTester.Run(bstIncremental, incrementalKeys: true);
+
+            
+
+            // Rýchle zobrazenie výsledkov (zvoľ si, kam to chceš vypísať)
+            Debug.WriteLine($"AVL (incremental):   Insert={repAvl.InsertTime}, Count={repAvl.CountAfter}");
+            //Debug.WriteLine($"BST (incremental):   Insert={repBstInc.InsertTime}, Count={repBstInc.CountAfter}");
+            Debug.WriteLine($"BST (random):        Insert={repBstRand.InsertTime}, Count={repBstRand.CountAfter}");
             InitializeComponent();
+
+
             _view = new ApplicationView();
         }
         private int GetSelectedTaskIndex1Based()

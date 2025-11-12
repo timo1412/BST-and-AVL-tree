@@ -18,9 +18,7 @@ namespace SemestralnaPracaAUS2.Tester
         const int INTERVAL_FIND_COUNT = 1_000_000;
         const int MIN_OPS = 2_000_000;
         const int MAX_OPS = 2_000_000;
-
         private static readonly Random Rnd = new(123456);
-
         public sealed class Report
         {
             public TimeSpan InsertTime, DeleteTime, PointFindTime, IntervalFindTime, MinTime, MaxTime;
@@ -34,8 +32,77 @@ namespace SemestralnaPracaAUS2.Tester
                                         Max():           {MaxTime}
                                         Count after:     {CountAfter}";
         }
+        public static void RunAddFindDeleteBalanced(BST<Person> tree,int operations = 1_000_000,double findShare = 0.20,double deleteHitShare = 0.80) 
+        {
+            int finds = (int)Math.Round(operations * findShare);
+            int adds = (operations - finds) / 2;
+            int dels = operations - finds - adds; 
+            if (dels != adds) dels = adds;         
 
+            // 2) Priprav náhodne premiešanú sekvenciu operácií: 0=ADD, 1=DEL, 2=FIND
+            var ops = new int[operations];
+            int k = 0;
+            for (int i = 0; i < adds; i++) ops[k++] = 0;
+            for (int i = 0; i < dels; i++) ops[k++] = 1;
+            for (int i = 0; i < finds; i++) ops[k++] = 2;
+            for (int i = ops.Length - 1; i > 0; i--) { int j = Rnd.Next(i + 1); (ops[i], ops[j]) = (ops[j], ops[i]); }
 
+            // 3) Jednoduchý unikátny generátor kľúčov pre Person (Weight je komparátor)
+            long nextKey = 0;
+            var inserted = new List<Person>(adds);
+
+            // 4) Spúšťaj operácie bez špeciálneho „ak prázdny, tak vlož“ správania
+            for (int i = 0; i < ops.Length; i++)
+            {
+                switch (ops[i])
+                {
+                    case 0:
+                        {
+                            int key = unchecked((int)nextKey++);
+                            var p = new Person("N" + key, "S" + key, (double)key);
+                            if (tree.Add(p)) inserted.Add(p);
+                            break;
+                        }
+
+                    case 1:
+                        {
+                            if (Rnd.NextDouble() < deleteHitShare && inserted.Count > 0)
+                            {
+                                int ei = Rnd.Next(inserted.Count);
+                                var victim = inserted[ei];
+                                if (tree.Delete(victim))
+                                {
+                                    inserted[ei] = inserted[^1];
+                                    inserted.RemoveAt(inserted.Count - 1);
+                                }
+                            }
+                            else
+                            {
+                                int rk = Rnd.Next(int.MinValue, int.MaxValue);
+                                var ghost = new Person("X" + rk, "Y" + rk, (double)rk);
+                                tree.Delete(ghost);
+                            }
+                            break;
+                        }
+
+                    default:
+                        {
+                            if (Rnd.Next(2) == 0 && inserted.Count > 0)
+                            {
+                                var probe = inserted[Rnd.Next(inserted.Count)];
+                                tree.Find(probe, out _);
+                            }
+                            else
+                            {
+                                int fk = Rnd.Next(int.MinValue, int.MaxValue);
+                                var probe = new Person("F" + fk, "Z" + fk, (double)fk);
+                                tree.Find(probe, out _);
+                            }
+                            break;
+                        }
+                }
+            }
+        }
         public static void RunRandom(BST<Person> tree) 
         {
             int countOp = 1000000;
@@ -131,36 +198,51 @@ namespace SemestralnaPracaAUS2.Tester
                 }
             }
         }
-
-        /// <summary>
-        /// Otestuje tvoj BST<Person> alebo AVLTree<Person>.
-        /// Porovnávacím kľúčom je Person.Weight (double).
-        /// Aby sme sa vyhli duplicitám, generujeme unikátne 'weight' ako Double z unikátneho int kľúča.
-        /// </summary>
-        public static Report Run(BST<Person> tree)
+        public static Report Run(BST<Person> tree, bool incrementalKeys)
         {
             // -------- 1) INSERT 10M unikátnych prvkov --------
             var inserted = new List<Person>(INSERT_COUNT);
-            var usedKeys = new HashSet<int>();
+            //var usedKeys = new HashSet<int>();
             var sw = Stopwatch.StartNew();
 
-            while (inserted.Count < INSERT_COUNT)
+            if (incrementalKeys)
             {
-                // Unikátny celoint kľúč -> prekonvertujeme na double (bez zaokrúhľovania)
-                int k = Rnd.Next(int.MinValue, int.MaxValue);
-                if (!usedKeys.Add(k)) continue;
-
-                double weight = k; // unikátny a totálne rozlíšiteľný
-                var p = new Person("N" + k, "S" + k, weight);
-
-                if (tree.Add(p))
+                // inkrementálne kľúče: 0,1,2,...
+                int nextKey = 0;
+                while (inserted.Count < INSERT_COUNT)
                 {
-                    inserted.Add(p);
+                    int k = nextKey++;
+                    double weight = k;
+                    var p = new Person("N" + k, "S" + k, weight);
+
+                    if (tree.Add(p))
+                    {
+                        inserted.Add(p);
+                    }
+                    // pri inkrementálnych kľúčoch sa kolízia neočakáva
                 }
-                else
+            }
+            else
+            {
+                // náhodné unikátne kľúče (pôvodné správanie)
+                var usedKeys = new HashSet<int>();
+                while (inserted.Count < INSERT_COUNT)
                 {
-                    // (nemalo by sa stať, ale pre istotu vrátime k späť)
-                    usedKeys.Remove(k);
+                    int k = Rnd.Next(int.MinValue, int.MaxValue);
+                    if (!usedKeys.Add(k)) continue;
+
+                    double weight = k; // unikátny a jednoznačný
+                    var p = new Person("N" + k, "S" + k, weight);
+
+                    if (tree.Add(p))
+                    {
+                        inserted.Add(p);
+                    }
+                    else
+                    {
+                        // (nemalo by sa stať, ale pre istotu kľúč uvoľníme)
+                        usedKeys.Remove(k);
+                    }
                 }
             }
 

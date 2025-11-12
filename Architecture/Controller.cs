@@ -95,7 +95,7 @@ namespace SemestralnaPracaAUS2.Architecture
         {
             try
             {
-                var tests = _model.ListAllByDistrictPeriod(from, to, district);
+                var tests = _model.ListAllByDistrictPeriod(from, to, district); 
                 return (true, null, tests);
             }
             catch (Exception ex)
