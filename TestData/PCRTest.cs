@@ -21,6 +21,7 @@ namespace SemestralnaPracaAUS2.TestData
 
         public PCRTest(
             DateTime dateStartTest,
+            string uniqueNumberPerson,
             int numberOfDistrict,
             int numberOfRegion,
             bool resultOfTest,
@@ -28,7 +29,7 @@ namespace SemestralnaPracaAUS2.TestData
             string note)
         {
             DateStartTest = dateStartTest;
-            UniqueNumberPerson = RandomId(5); //TODO: spravit tak aby som pri pridavani testu vytvoril k nemu aj pacienta 
+            UniqueNumberPerson = uniqueNumberPerson;
             UniqueNumberPCR = Rnd.Next(1, 1_000_000 + 1);
             UniqueNumberPCRPlace = Rnd.Next(1, 20_000 + 1);
             NumberOfDistrict = numberOfDistrict;

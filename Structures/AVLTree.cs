@@ -540,7 +540,10 @@ namespace SemestralnaPracaAUS2.Structures
                 curr = n.Right;
             }
         }
-
+        public override void Clear()
+        {
+            base.Clear();
+        }   
         public List<T> InOrderList()
         {
             var result = new List<T>(count);

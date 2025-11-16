@@ -26,6 +26,7 @@ namespace SemestralnaPracaAUS2.Architecture
             {
                 var entity = new PCRTest(
                     dto.DateStartTest,
+                    dto.PersonId,
                     dto.NumberOfDistrict,
                     dto.NumberOfRegion,
                     dto.ResultOfTest,
@@ -152,7 +153,7 @@ namespace SemestralnaPracaAUS2.Architecture
                 return (false, ex.Message, null);
             }
         }
-        public (bool ok, string? error, IReadOnlyList<Person>? persons)ListSickByDistrictAtDate(DateTime at, int district, int xDays)
+        public (bool ok, string? error, IReadOnlyList<Person>? persons)ListSickByDistrictAtDate(DateTime at,int district, int xDays)
         {
             try
             {
@@ -351,6 +352,7 @@ namespace SemestralnaPracaAUS2.Architecture
 
         public readonly record struct PcrInputDto(
             DateTime DateStartTest,
+            string PersonId,
             int NumberOfDistrict,
             int NumberOfRegion,
             bool ResultOfTest,

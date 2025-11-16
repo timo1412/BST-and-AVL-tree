@@ -2,6 +2,7 @@
 using SemestralnaPracaAUS2.TestData;
 using SemestralnaPracaAUS2.Wrappers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -9,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using static SemestralnaPracaAUS2.TestData.SeedContracts;
 
 namespace SemestralnaPracaAUS2.Architecture
@@ -23,6 +25,8 @@ namespace SemestralnaPracaAUS2.Architecture
         private readonly AVLTree<PcrByRegionDate> _idxByRegionDate = new AVLTree<PcrByRegionDate>();
         private readonly AVLTree<PcrByDistrictDate> _idxByDistrictDate = new AVLTree<PcrByDistrictDate>();
         private readonly AVLTree<PcrByWorkplaceDate> _idxByWorkplaceDate = new AVLTree<PcrByWorkplaceDate>();
+
+        private readonly AVLTree<SickByDistrictDate> _idxSickByDistrictDate = new AVLTree<SickByDistrictDate>();
 
         private readonly AVLTree<PcrPosByDate> _posByDate = new();
         private readonly AVLTree<PcrPosByRegionDate> _posByRegionDate = new();
@@ -39,6 +43,24 @@ namespace SemestralnaPracaAUS2.Architecture
         public void InsertPcr(PCRTest t)
         {
             if (t is null) throw new ArgumentNullException(nameof(t));
+
+            if (!string.IsNullOrWhiteSpace(t.UniqueNumberPerson))
+            {
+                if (!_idxPersonById.Find(PersonByUniqueNumber.FromKey(t.UniqueNumberPerson), out var pWrap) ||
+                    pWrap.Value is null)
+                {
+                    throw new InvalidOperationException(
+                        $"Osoba s ID '{t.UniqueNumberPerson}' neexistuje – test nemožno priradiť.");
+                }
+                var person = pWrap.Value;
+                person.personPcrTests.Add(PcrByCode.Of(t));
+
+                if (t.ResultOfTest)
+                {
+                    UpdateSickIndexForPositive(person, t);
+                }
+            }
+
             _idxByCode.Add(PcrByCode.Of(t));
             _idxByPerson.Add(PcrByPersonDate.Of(t));
             _idxByDate.Add(PcrByDate.Of(t));
@@ -244,6 +266,7 @@ namespace SemestralnaPracaAUS2.Architecture
             {
                 _posByDistrictDate.Add(PcrPosByDistrictDate.Of(pcr));
                 _posByRegionDate.Add(PcrPosByRegionDate.Of(pcr));
+                UpdateSickIndexForPositive(person, pcr);
             }
                 
             // 5) zanes aj do osobného stromu danej osoby
@@ -454,31 +477,30 @@ namespace SemestralnaPracaAUS2.Architecture
             if (district <= 0) throw new ArgumentOutOfRangeException(nameof(district));
             if (xDays <= 0) throw new ArgumentOutOfRangeException(nameof(xDays));
 
-            var from = at.AddDays(-(xDays - 1));
+            var atDate = at.Date;                         
+            var from = atDate.AddDays(-(xDays - 1)); 
 
-            var lo = PcrPosByDistrictDate.Low(district, from);
-            var hi = PcrPosByDistrictDate.High(district, at);
+            var lo = SickByDistrictDate.Low(district, from);
+            var hi = SickByDistrictDate.High(district, atDate);
 
-            // 1) Range: len pozitívne testy daného okresu v okne [from, at], už zoradené
-            // 2) Select -> vezmi personId
-            // 3) Distinct -> každú osobu iba raz
-            // 4) Získaj Person z indexu (_idxPersonById)
-            // 5) Zorad podľa priezviska, mena, ID
-            return _posByDistrictDate
-                .Range(lo, hi)
-                .Select(w => w.Value!.UniqueNumberPerson)
-                .Distinct(StringComparer.Ordinal)
-                .Select(pid =>
-                {
-                    return _idxPersonById.Find(PersonByUniqueNumber.FromKey(pid), out var pWrap)
-                        ? pWrap.Value
-                        : null;
-                })
-                .Where(p => p != null)!
-                .OrderBy(p => p!.LastName, StringComparer.Ordinal)
-                .ThenBy(p => p!.FirstName, StringComparer.Ordinal)
-                .ThenBy(p => p!.UniqueNumber, StringComparer.Ordinal)
-                .ToList();
+            var persons = new List<Person>();
+
+            foreach (var wrap in _idxSickByDistrictDate.Range(lo, hi))
+            {
+                if (wrap.Value != null)
+                    persons.Add(wrap.Value);
+            }
+
+            persons.Sort((a, b) =>
+            {
+                int c = string.Compare(a.LastName, b.LastName, StringComparison.Ordinal);
+                if (c != 0) return c;
+                c = string.Compare(a.FirstName, b.FirstName, StringComparison.Ordinal);
+                if (c != 0) return c;
+                return string.Compare(a.UniqueNumber, b.UniqueNumber, StringComparison.Ordinal);
+            });
+
+            return persons;
         }
         public IReadOnlyList<(Person Person, PCRTest Test)> ListSickByDistrictAtDateWithTest(DateTime at, int district, int xDays)
         {
@@ -953,15 +975,19 @@ namespace SemestralnaPracaAUS2.Architecture
             if (clearExisting)
             {
                 // Ak tvoje AVL majú Clear(), použi ho. Inak si nechaj Delete cez Range (náročnejšie).
-                //_idxPersonById.Clear();
-                //_idxPersonByBirth.Clear();
+                _idxPersonById.Clear();
+                _idxPersonByBirth.Clear();
 
-                //_idxByCode.Clear();
-                //_idxByPerson.Clear();
-                //_idxByDate.Clear();
-                //_idxByRegionDate.Clear();
-                //_idxByDistrictDate.Clear();
-                //_idxByWorkplaceDate.Clear();
+                _idxByCode.Clear();
+                _idxByPerson.Clear();
+                _idxByDate.Clear();
+                _idxByRegionDate.Clear();
+                _idxByDistrictDate.Clear();
+                _idxByWorkplaceDate.Clear();
+
+                 _posByDate.Clear();
+                _posByRegionDate.Clear();
+                _posByDistrictDate.Clear();
             }
 
             int personsImported = 0;
@@ -1050,6 +1076,8 @@ namespace SemestralnaPracaAUS2.Architecture
                         && pWrap.Value is Person person)
                     {
                         person.personPcrTests.Add(PcrByCode.Of(pcr));
+                        if (pcr.ResultOfTest)
+                            UpdateSickIndexForPositive(person, pcr);
                     }
 
                     // pozitívny index
@@ -1058,6 +1086,7 @@ namespace SemestralnaPracaAUS2.Architecture
                         _posByDistrictDate.Add(PcrPosByDistrictDate.Of(pcr));
                         _posByRegionDate.Add(PcrPosByRegionDate.Of(pcr));
                         _posByDate.Add(PcrPosByDate.Of(pcr));
+                        
                     }
                         
 
@@ -1189,6 +1218,43 @@ namespace SemestralnaPracaAUS2.Architecture
             newOwner.personPcrTests.Add(PcrByCode.Of(updated));
 
             return updated;
+        }
+        private void UpdateSickIndexForPositive(Person person, PCRTest t)
+        {
+            if (!t.ResultOfTest) return;                     // len pozitívne
+            if (string.IsNullOrEmpty(person.UniqueNumber))   
+                return;
+
+            int district = t.NumberOfDistrict;
+            string pid = person.UniqueNumber;
+
+            // nájdi existujúci záznam pre (district, person) – maximálne 1
+            var loDist = SickByDistrictDate.Low(district, DateTime.MinValue);
+            var hiDist = SickByDistrictDate.High(district, DateTime.MaxValue);
+
+            SickByDistrictDate? existing = null;
+            foreach (var w in _idxSickByDistrictDate.Range(loDist, hiDist))
+            {
+                if (w.UniqueNumberPerson == pid)
+                {
+                    existing = w;
+                    break;
+                }
+            }
+
+            var newWrap = SickByDistrictDate.Of(person, district, t.DateStartTest);
+
+            if (existing == null)
+            {
+                // osoba ešte nemá pozitívny test v tomto okrese → pridáme
+                _idxSickByDistrictDate.Add(newWrap);
+            }
+            else if (newWrap.LastPositiveDate > existing.LastPositiveDate)
+            {
+                // nový test je novší → aktualizujeme dátum
+                _idxSickByDistrictDate.Delete(existing);
+                _idxSickByDistrictDate.Add(newWrap);
+            }
         }
     }
 }

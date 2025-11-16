@@ -38,10 +38,10 @@ namespace SemestralnaPracaAUS2
         {
 
             var avl = new AVLTree<Person>();
-            var repAvl = StructurePerfTester.Run(avl, incrementalKeys: true);
+            //var repAvl = StructurePerfTester.Run(avl, incrementalKeys: true);
 
             var bstRandom = new BST<Person>();
-            var repBstRand = StructurePerfTester.Run(bstRandom, incrementalKeys: false);
+            //var repBstRand = StructurePerfTester.Run(bstRandom, incrementalKeys: false);
 
             var bstIncremental = new BST<Person>();
             //var repBstInc = StructurePerfTester.Run(bstIncremental, incrementalKeys: true);
@@ -49,9 +49,9 @@ namespace SemestralnaPracaAUS2
             
 
             // Rýchle zobrazenie výsledkov (zvoľ si, kam to chceš vypísať)
-            Debug.WriteLine($"AVL (incremental):   Insert={repAvl.InsertTime}, Count={repAvl.CountAfter}");
+            //Debug.WriteLine($"AVL (incremental):   Insert={repAvl.InsertTime}, Count={repAvl.CountAfter}");
             //Debug.WriteLine($"BST (incremental):   Insert={repBstInc.InsertTime}, Count={repBstInc.CountAfter}");
-            Debug.WriteLine($"BST (random):        Insert={repBstRand.InsertTime}, Count={repBstRand.CountAfter}");
+            //Debug.WriteLine($"BST (random):        Insert={repBstRand.InsertTime}, Count={repBstRand.CountAfter}");
             InitializeComponent();
 
 
@@ -554,8 +554,9 @@ namespace SemestralnaPracaAUS2
             // Controller vráti dvojice (Person, PCRTest), už ZORADENÉ podľa hodnoty testu
             var rows = _view.ListSickByDistrictAtDateSortedWithTestFromGui(
                 atDate, atTime, district, xDays);
+            var viewRows = rows.Select(t => new SickWithTest(t.Item1, t.Item2)).ToList();
             ConfigurePersonsGridForSickWithTest();
-            dgPersons.ItemsSource = rows;     // << dáme do tabuľky „Osoby“
+            dgPersons.ItemsSource = viewRows;     // << dáme do tabuľky „Osoby“
             tabLists.SelectedIndex = 0;       // prepni na Osoby
             txtStatus.Text = "Chorí v okrese (zoradení podľa hodnoty testu) s referenčným testom.";
             LogToGui($"[SickByDistrictSorted] okres='{district}', at={atDate:yyyy-MM-dd} {atTime}, X={xDays}");
@@ -682,18 +683,18 @@ namespace SemestralnaPracaAUS2
         private void HandleListSickByDistrictAtDate()
         {
             var atDate = dpSickOkresDate.SelectedDate; // DateTime?
-            var atTime = tbSickOkresTime.Text;         // string
+            //var atTime = tbSickOkresTime.Text;         // string
             var district = tbSickOkresDistrict.Text;     // string
             var xDays = tbSickOkresXDays.Text;        // string
 
-            var persons = _view.ListSickByDistrictAtDateFromGui(
-                atDate, atTime,
+            var rows = _view.ListSickByDistrictAtDateFromGui(
+                atDate,
                 district,
                 xDays
             );
-
+            var persons = rows.Select(t => t).ToList();
             // zobraz osoby v tabuľke „Osoby“
-            ConfigurePersonsGridForPerson();
+             ConfigurePersonsGridForPerson();
             dgPersons.ItemsSource = persons;
             tabLists.SelectedIndex = 0; // prepni na „Osoby“
 
@@ -859,6 +860,7 @@ namespace SemestralnaPracaAUS2
             _view.InsertPcrFromGui(
                 selectedDate: dpPcrDate.SelectedDate,
                 timeText: tbPcrTime.Text,
+                personIdTexr: tbPersonIdForPcr.Text,
                 districtText: tbDistrictCode.Text,
                 regionText: tbRegionCode.Text,
                 resultPositive: chkResultPositive.IsChecked == true,
@@ -930,9 +932,10 @@ namespace SemestralnaPracaAUS2
 
         private void ConfigurePersonsGridForSickWithTest()
         {
-            dgPersons.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.VisibleWhenSelected;
             dgPersons.AutoGenerateColumns = false;
             dgPersons.Columns.Clear();
+            dgPersons.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.VisibleWhenSelected;
+            
             dgPersons.Columns.Add(new DataGridTextColumn { Header = "ID pacienta", Binding = new Binding("Person.UniqueNumber"), Width = 140 });
             dgPersons.Columns.Add(new DataGridTextColumn { Header = "Meno", Binding = new Binding("Person.FirstName"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });
             dgPersons.Columns.Add(new DataGridTextColumn { Header = "Priezvisko", Binding = new Binding("Person.LastName"), Width = new DataGridLength(1, DataGridLengthUnitType.Star) });

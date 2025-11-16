@@ -36,7 +36,7 @@ namespace SemestralnaPracaAUS2.Architecture
             return (result!.Value.Person, result.Value.Pcr);
         }
 
-        public void InsertPcrFromGui(DateTime? selectedDate, string timeText, string districtText, string regionText, bool resultPositive, string valueText,string note)
+        public void InsertPcrFromGui(DateTime? selectedDate, string timeText,string personIdTexr, string districtText, string regionText, bool resultPositive, string valueText,string note)
         {
             // 1) Validácia + parsovanie vstupov
             if (selectedDate is null)
@@ -47,12 +47,12 @@ namespace SemestralnaPracaAUS2.Architecture
 
             int district = ParseIntInRange(districtText, 1, 79, "Kód okresu musí byť v intervale 1..79.");
             int region = ParseIntInRange(regionText, 1, 8, "Kód kraja musí byť v intervale 1..8.");
-
+            string personId = personIdTexr?.Trim() ?? string.Empty;
             double value = ParseDouble(valueText, "Hodnota testu musí byť číslo.");
 
-            // 3) Zostavenie DTO a volanie View→Model
             var dto = new PcrInputDto(
                 DateStartTest: dt,
+                PersonId: personId,
                 NumberOfDistrict: district,
                 NumberOfRegion: region,
                 ResultOfTest: resultPositive,
@@ -323,13 +323,11 @@ namespace SemestralnaPracaAUS2.Architecture
                 .OrderBy(t => t.DateStartTest)
                 .ToList();
         }
-        public IReadOnlyList<Person> ListSickByDistrictAtDateFromGui(DateTime? atDate, string atTime,string districtText,string xDaysText)
+        public IReadOnlyList<Person> ListSickByDistrictAtDateFromGui(DateTime? atDate,string districtText,string xDaysText)
         {
             // 1) Validácia a parsovanie vstupov
             if (atDate is null) throw new InvalidOperationException("Zvoľ dátum.");
-
-            var atTs = ParseTime(atTime); // používa existujúci helper HH:mm
-            var at = atDate.Value.Date + atTs;
+            var at = atDate.Value.Date;
 
             // kód okresu 1..79
             int district = ParseIntInRange(districtText, 1, 79, "Kód okresu musí byť v intervale 1..79.");

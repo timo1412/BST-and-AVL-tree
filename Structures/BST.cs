@@ -327,6 +327,12 @@ namespace SemestralnaPracaAUS2.Structures
                 curr = n.Right;
             }
         }
+        public virtual void Clear()
+        {
+            root = null;
+            count = 0;
+        }
+
 
         public List<T> InOrderList()
         {
