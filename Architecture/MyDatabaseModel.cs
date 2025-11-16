@@ -502,51 +502,81 @@ namespace SemestralnaPracaAUS2.Architecture
 
             return persons;
         }
-        public IReadOnlyList<(Person Person, PCRTest Test)> ListSickByDistrictAtDateWithTest(DateTime at, int district, int xDays)
+        public IReadOnlyList<(Person Person, PCRTest Test)> ListSickByDistrictAtDateWithTest(
+            DateTime at,
+            int district,
+            int xDays)
         {
             if (district <= 0) throw new ArgumentOutOfRangeException(nameof(district));
             if (xDays <= 0) throw new ArgumentOutOfRangeException(nameof(xDays));
 
-            var from = at.AddDays(-(xDays - 1));
+            // Pracujeme LEN s dátumom – čas ignorujeme
+            var atDate = at.Date;                            // napr. 2025-01-10
+            var fromDate = atDate.AddDays(-(xDays - 1));     // X dní dozadu vrátane atDate
 
-            var lo = PcrByDistrictDate.Low(district, from);
-            var hi = PcrByDistrictDate.High(district, at);
+            // Rozsah pre index: celé dni od fromDate 00:00 do atDate 23:59:59.999...
+            var rangeFrom = fromDate;                        // fromDate 00:00:00
+            var rangeTo = atDate.AddDays(1).AddTicks(-1);    // posledný tick dňa atDate
 
-            // pre každú osobu uchovávame najnovší pozitívny test v okne
+            var lo = PcrByDistrictDate.Low(district, rangeFrom);
+            var hi = PcrByDistrictDate.High(district, rangeTo);
+
+            // pre každú osobu uchovávame najnovší pozitívny test v kalendárnom okne
             var latestPositiveByPerson = new Dictionary<string, PCRTest>(StringComparer.Ordinal);
 
             foreach (var wrap in _idxByDistrictDate.Range(lo, hi))
             {
                 var t = wrap.Value; // PCRTest
-                if (!t.ResultOfTest) continue;                 // len pozitívne
-                if (t.NumberOfDistrict != district) continue;  // istota na okres
+                if (t is null) continue;
+
+                // len pozitívne testy v danom okrese
+                if (!t.ResultOfTest) continue;
+                if (t.NumberOfDistrict != district) continue;
+
+                // dátum testu (čas ignorujeme pre rozhodnutie, či patrí do X dní)
+                var testDate = t.DateStartTest.Date;
+
+                // mimo kalendárneho okna [fromDate, atDate] → preskoč
+                if (testDate < fromDate || testDate > atDate)
+                    continue;
 
                 var pid = t.UniqueNumberPerson;
+                if (string.IsNullOrEmpty(pid)) continue;
 
-                if (!latestPositiveByPerson.TryGetValue(pid, out var curr) || t.DateStartTest > curr.DateStartTest)
+                // pre danú osobu držíme NAJNOVŠÍ pozitívny test (podľa DateTime)
+                if (!latestPositiveByPerson.TryGetValue(pid, out var curr) ||
+                    t.DateStartTest > curr.DateStartTest)
+                {
                     latestPositiveByPerson[pid] = t;
+                }
             }
 
+            // zostavíme dvojice (osoba, jej najnovší pozitívny test v okne X dní)
             var pairs = new List<(Person Person, PCRTest Test)>(latestPositiveByPerson.Count);
 
             foreach (var (personId, test) in latestPositiveByPerson)
             {
-                if (_idxPersonById.Find(PersonByUniqueNumber.FromKey(personId), out var pWrap) && pWrap.Value != null)
+                if (_idxPersonById.Find(PersonByUniqueNumber.FromKey(personId), out var pWrap) &&
+                    pWrap.Value != null)
                 {
                     pairs.Add((pWrap.Value, test));
                 }
                 // ak by osoba chýbala (nemalo by sa stať), preskočíme
             }
 
-            // zoradenie podľa hodnoty testu (najväčšia najskôr), pri zhode novší test skôr, potom podľa ID
+            // zoradenie podľa hodnoty testu (najväčšia najskôr),
+            // pri zhode novší test skôr, potom podľa ID osoby
             pairs.Sort((a, b) =>
             {
                 int c = b.Test.ValueOfTest.CompareTo(a.Test.ValueOfTest);
                 if (c != 0) return c;
+
                 c = b.Test.DateStartTest.CompareTo(a.Test.DateStartTest);
                 if (c != 0) return c;
+
                 return string.Compare(a.Person.UniqueNumber, b.Person.UniqueNumber, StringComparison.Ordinal);
             });
+
             return pairs;
         }
         public Person AddPerson(string firstName, string lastName, DateTime birthDate, double weight)
@@ -677,13 +707,15 @@ namespace SemestralnaPracaAUS2.Architecture
         {
             if (xDays <= 0) throw new ArgumentOutOfRangeException(nameof(xDays));
 
-            // Chorý X dní od pozitívneho testu => okno [at-(X-1), at]
-            var from = at.AddDays(-(xDays - 1));
+            var atDate = at.Date;
+            var fromDate = atDate.AddDays(-(xDays - 1));
 
-            var lo = PcrByDate.Low(from);
-            var hi = PcrByDate.High(at);
+            var rangeFrom = fromDate;
+            var rangeTo = atDate.AddDays(1).AddTicks(-1);
 
-            // pre každý kraj držíme množinu unikátnych osôb (podľa UniqueNumberPerson)
+            var lo = PcrByDate.Low(rangeFrom);
+            var hi = PcrByDate.High(rangeTo);
+
             var perRegionPersons = new Dictionary<int, HashSet<string>>();
 
             foreach (var wrap in _idxByDate.Range(lo, hi))
@@ -704,7 +736,6 @@ namespace SemestralnaPracaAUS2.Architecture
             foreach (var kv in perRegionPersons)
                 rows.Add((kv.Key, kv.Value.Count));//
 
-            // zoradenie: najviac chorých najskôr, pri zhode podľa kódu kraja vzostupne
             rows.Sort((a, b) =>
             {
                 int c = b.SickCount.CompareTo(a.SickCount);
@@ -718,19 +749,21 @@ namespace SemestralnaPracaAUS2.Architecture
         {
             if (xDays <= 0) throw new ArgumentOutOfRangeException(nameof(xDays));
 
-            // Chorý X dní od pozitívneho testu => [at-(X-1), at]
-            var from = at.AddDays(-(xDays - 1));
+            var atDate = at.Date;
+            var fromDate = atDate.AddDays(-(xDays - 1)); 
 
-            var lo = PcrByDate.Low(from);
-            var hi = PcrByDate.High(at);
+            var rangeFrom = fromDate;
+            var rangeTo = atDate.AddDays(1).AddTicks(-1);
 
-            // okres -> množina unikátnych osôb
+            var lo = PcrByDate.Low(rangeFrom);
+            var hi = PcrByDate.High(rangeTo);
+
             var perDistrictPersons = new Dictionary<int, HashSet<string>>();
 
             foreach (var wrap in _idxByDate.Range(lo, hi))
             {
-                var t = wrap.Value;            // PCRTest
-                if (!t.ResultOfTest) continue; // len pozitívne
+                var t = wrap.Value;            
+                if (!t.ResultOfTest) continue; 
 
                 int district = t.NumberOfDistrict;
                 if (!perDistrictPersons.TryGetValue(district, out var set))
@@ -738,7 +771,7 @@ namespace SemestralnaPracaAUS2.Architecture
                     set = new HashSet<string>(StringComparer.Ordinal);
                     perDistrictPersons[district] = set;
                 }
-                set.Add(t.UniqueNumberPerson); // unikátna osoba v rámci okresu
+                set.Add(t.UniqueNumberPerson); 
             }
 
             var rows = new List<(int District, int SickCount)>(perDistrictPersons.Count);
@@ -755,99 +788,112 @@ namespace SemestralnaPracaAUS2.Architecture
 
             return rows;
         }
-        public IReadOnlyList<Person> ListSickByRegionAtDate(DateTime at, int region, int xDays)
+        public IReadOnlyList<(Person Person, PCRTest Test)> ListSickByRegionAtDateWithTest(DateTime at, int region, int xDays)
         {
             if (region <= 0) throw new ArgumentOutOfRangeException(nameof(region));
             if (xDays <= 0) throw new ArgumentOutOfRangeException(nameof(xDays));
 
-            // Chorý X dní od pozitívneho testu => okno [at-(X-1), at]
-            var from = at.AddDays(-(xDays - 1));
+            var atDate = at.Date;
+            var fromDate = atDate.AddDays(-(xDays - 1));    
 
-            var lo = PcrByRegionDate.Low(region, from);
-            var hi = PcrByRegionDate.High(region, at);
+            // rozsah pre index pozitívnych testov v kraji
+            var rangeFrom = fromDate;                        
+            var rangeTo = atDate.AddDays(1).AddTicks(-1);
 
-            var seen = new HashSet<string>(StringComparer.Ordinal); // UniqueNumberPerson
-            var persons = new List<Person>();
+            //index IBA s pozitívnymi testami podľa kraja a dátumu
+            var lo = PcrPosByRegionDate.Low(region, rangeFrom);
+            var hi = PcrPosByRegionDate.High(region, rangeTo);
 
-            foreach (var wrap in _idxByRegionDate.Range(lo, hi))
+            var latestPositiveByPerson = new Dictionary<string, PCRTest>(StringComparer.Ordinal);
+
+            foreach (var wrap in _posByRegionDate.Range(lo, hi))
             {
-                var t = wrap.Value; // PCRTest
-                if (!t.ResultOfTest) continue;
-                if (t.NumberOfRegion != region) continue; // istota na región
+                var t = wrap.Value; 
+                if (t is null) continue;
 
                 var personId = t.UniqueNumberPerson;
-                if (!seen.Add(personId)) continue; // už zarátaný
+                if (string.IsNullOrEmpty(personId)) continue;
 
-                if (_idxPersonById.Find(PersonByUniqueNumber.FromKey(personId), out var pWrap) && pWrap.Value != null)
+                if (!latestPositiveByPerson.TryGetValue(personId, out var curr) ||
+                    t.DateStartTest > curr.DateStartTest)
                 {
-                    persons.Add(pWrap.Value);
+                    latestPositiveByPerson[personId] = t;
                 }
-                // ak by osoba chýbala, preskočíme
             }
-
-            // Stabilné a čitateľné poradie
-            persons.Sort((a, b) =>
+            var pairs = new List<(Person Person, PCRTest Test)>(latestPositiveByPerson.Count);
+            foreach (var (personId, test) in latestPositiveByPerson)
             {
-                int c = string.Compare(a.LastName, b.LastName, StringComparison.Ordinal);
-                if (c != 0) return c;
-                c = string.Compare(a.FirstName, b.FirstName, StringComparison.Ordinal);
-                if (c != 0) return c;
-                return string.Compare(a.UniqueNumber, b.UniqueNumber, StringComparison.Ordinal);
-            });
-
-            return persons;
+                if (_idxPersonById.Find(PersonByUniqueNumber.FromKey(personId), out var pWrap) &&
+                    pWrap.Value != null)
+                {
+                    pairs.Add((pWrap.Value, test));
+                }
+            }
+            return pairs;
         }
-        public IReadOnlyList<Person> ListSickAllAtDate(DateTime at, int xDays)
+        public IReadOnlyList<(Person Person, PCRTest Test)> ListSickAllAtDate(DateTime at, int xDays)
         {
             if (xDays <= 0) throw new ArgumentOutOfRangeException(nameof(xDays));
 
-            // Chorý X dní od pozitívneho testu => okno [at-(X-1), at]
-            var from = at.AddDays(-(xDays - 1));
+            var atDate = at.Date;
+            var fromDate = atDate.AddDays(-(xDays - 1));  // X dní dozadu vrátane atDate
 
-            var lo = PcrByDate.Low(from);
-            var hi = PcrByDate.High(at);
+            var rangeFrom = fromDate;
+            var rangeTo = atDate.AddDays(1).AddTicks(-1);
 
-            var seen = new HashSet<string>(StringComparer.Ordinal); // UniqueNumberPerson
-            var persons = new List<Person>();
+            // index IBA s pozitívnymi testami podľa dátumu
+            var lo = PcrPosByDate.Low(rangeFrom);
+            var hi = PcrPosByDate.High(rangeTo);
 
-            // prejdeme všetky pozitívne testy v okne
-            foreach (var wrap in _idxByDate.Range(lo, hi))
+            // pre každú osobu držíme rovno dvojicu (Person, jej posledný pozitívny test)
+            var byPerson = new Dictionary<string, (Person Person, PCRTest Test)>(StringComparer.Ordinal);
+
+            foreach (var wrap in _posByDate.Range(lo, hi))
             {
-                var t = wrap.Value;            // PCRTest
-                if (!t.ResultOfTest) continue; // len pozitívne
+                var t = wrap.Value; // PCRTest – pozitívny
+                if (t is null) continue;
+
+                // striktne podľa kalendárneho dátumu (bez času)
+                var testDate = t.DateStartTest.Date;
+                if (testDate < fromDate || testDate > atDate)
+                    continue;
 
                 var personId = t.UniqueNumberPerson;
-                if (!seen.Add(personId)) continue; // už pridaný
+                if (string.IsNullOrEmpty(personId)) continue;
 
-                // dotiahni osobu z indexu osôb
-                if (_idxPersonById.Find(PersonByUniqueNumber.FromKey(personId), out var pWrap) && pWrap.Value != null)
-                    persons.Add(pWrap.Value);
+                if (!byPerson.TryGetValue(personId, out var curr))
+                {
+                    // prvý pozitívny test v okne pre túto osobu – dotiahneme Person
+                    if (_idxPersonById.Find(PersonByUniqueNumber.FromKey(personId), out var pWrap) &&
+                        pWrap.Value != null)
+                    {
+                        byPerson[personId] = (pWrap.Value, t);
+                    }
+                }
+                else
+                {
+                    // osobu už máme, kontrolujeme či je tento test novší
+                    if (t.DateStartTest > curr.Test.DateStartTest)
+                    {
+                        byPerson[personId] = (curr.Person, t);
+                    }
+                }
             }
-
-            // čitateľné deterministické poradie
-            persons.Sort((a, b) =>
-            {
-                int c = string.Compare(a.LastName, b.LastName, StringComparison.Ordinal);
-                if (c != 0) return c;
-                c = string.Compare(a.FirstName, b.FirstName, StringComparison.Ordinal);
-                if (c != 0) return c;
-                return string.Compare(a.UniqueNumber, b.UniqueNumber, StringComparison.Ordinal);
-            });
-
-            return persons;
+            return byPerson.Values.ToList();
         }
 
         public IReadOnlyList<(Person Person, PCRTest Test)> ListSickAllAtDateWithTest(DateTime at, int xDays)
         {
             if (xDays <= 0) throw new ArgumentOutOfRangeException(nameof(xDays));
 
-            // chorý X dní => okno [at-(X-1), at]
-            var from = at.AddDays(-(xDays - 1));
+            var atDate = at.Date;
+            var fromDate = atDate.AddDays(-(xDays - 1)); 
 
-            var lo = PcrByDate.Low(from);
-            var hi = PcrByDate.High(at);
+            var rangeFrom = fromDate;
+            var rangeTo = atDate.AddDays(1).AddTicks(-1);
 
-            // pre každý okres si držíme test s najvyššou hodnotou
+            var lo = PcrByDate.Low(rangeFrom);
+            var hi = PcrByDate.High(rangeTo);
             var bestByDistrict = new Dictionary<int, PCRTest>();
 
             foreach (var wrap in _idxByDate.Range(lo, hi))
@@ -872,7 +918,6 @@ namespace SemestralnaPracaAUS2.Architecture
                 {
                     pairs.Add((pWrap.Value, test));
                 }
-                // ak by osoba chýbala (nemalo by sa stať), okres vynecháme
             }
 
             return pairs;

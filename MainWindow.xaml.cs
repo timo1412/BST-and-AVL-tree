@@ -547,19 +547,28 @@ namespace SemestralnaPracaAUS2
         private void HandleListSickByDistrictAtDateSorted()
         {
             var atDate = dpSickOkresSortedDate.SelectedDate; // DateTime?
-            var atTime = tbSickOkresSortedTime.Text;         // string
-            var district = tbSickOkresSortedDistrict.Text;     // string
-            var xDays = tbSickOkresSortedXDays.Text;        // string
+                
+            var district = tbSickOkresSortedDistrict.Text;   // string
+            var xDays = tbSickOkresSortedXDays.Text;         // string
 
-            // Controller vráti dvojice (Person, PCRTest), už ZORADENÉ podľa hodnoty testu
+            // 1) Získať (Person, PCRTest) páry zo view
             var rows = _view.ListSickByDistrictAtDateSortedWithTestFromGui(
-                atDate, atTime, district, xDays);
-            var viewRows = rows.Select(t => new SickWithTest(t.Item1, t.Item2)).ToList();
-            ConfigurePersonsGridForSickWithTest();
-            dgPersons.ItemsSource = viewRows;     // << dáme do tabuľky „Osoby“
-            tabLists.SelectedIndex = 0;       // prepni na Osoby
-            txtStatus.Text = "Chorí v okrese (zoradení podľa hodnoty testu) s referenčným testom.";
-            LogToGui($"[SickByDistrictSorted] okres='{district}', at={atDate:yyyy-MM-dd} {atTime}, X={xDays}");
+                atDate, district, xDays);
+
+            // 2) Zabaliť do SickWithTest, aby sa dalo pekne bindovať v XAML
+            var viewRows = rows
+                .Select(t => new SickWithTest(t.Person, t.Test))
+                .ToList();
+
+            // 3) Nastaviť ItemsSource na dgPersons
+            dgPersonsPCR.ItemsSource = viewRows;
+
+            // 4) Prepni na tab s osobami + PCR testami
+            tabLists.SelectedItem = tabLists.Items
+                .OfType<TabItem>()
+                .FirstOrDefault(t => (string)t.Header == "Osoby + PCR testy");
+
+            txtStatus.Text = "Chorí v okrese (zoradení podľa hodnoty testu) – osoba + jej referenčný PCR test.";
         }
         public sealed class DistrictSickRow
         {
@@ -569,10 +578,9 @@ namespace SemestralnaPracaAUS2
         private void HandleListRegionsBySickCountAtDate()
         {
             var atDate = dpSickRegionsDate.SelectedDate;
-            var atTime = tbSickRegionsTime.Text;
             var xDays = tbSickRegionsXDays.Text;
 
-            var rows = _view.ListRegionsBySickCountAtDateFromGui(atDate, atTime, xDays);
+            var rows = _view.ListRegionsBySickCountAtDateFromGui(atDate, xDays);
 
             dgRegions.ItemsSource = null;
             dgRegions.Items.Clear();
@@ -583,54 +591,53 @@ namespace SemestralnaPracaAUS2
 
             tabLists.SelectedIndex = 2;
             txtStatus.Text = "Zobrazené kraje podľa počtu chorých osôb k dátumu.";
-            LogToGui($"[RegionsBySickCount] at={atDate:yyyy-MM-dd} {atTime}, X={xDays}");
+            LogToGui($"[RegionsBySickCount] at={atDate:yyyy-MM-dd}, X={xDays}");
         }
         private void HandleListSickByRegionAtDate()
         {
             var atDate = dpSickRegionDate.SelectedDate; // DateTime?
-            var atTime = tbSickRegionTime.Text;         // string
             var region = tbSickRegionCode.Text;         // string
             var xDays = tbSickRegionXDays.Text;        // string
 
-            var persons = _view.ListSickByRegionAtDateFromGui(
-                atDate, atTime,
-                region,
-                xDays
+            var rows = _view.ListSickByRegionAtDateWithTestFromGui(
+              atDate,
+              region,
+              xDays
             );
-            //// zobraz osoby v tabuľke „Osoby“
-            //dgPersons.Columns.Clear();
-            //dgPersons.AutoGenerateColumns = true;   // krátkodobo
-            ConfigurePersonsGridForPerson();
-            dgPersons.ItemsSource = persons;
-            tabLists.SelectedIndex = 0; // prepni na „Osoby“
 
+            var viewRows = rows
+            .Select(t => new SickWithTest(t.Person, t.Test))
+            .ToList();
+
+            dgPersonsPCR.ItemsSource = viewRows;
+            tabLists.SelectedIndex = 4;
             txtStatus.Text = "Zobrazený zoznam chorých osôb v kraji k dátumu.";
-            LogToGui($"[SickByRegionAtDate] region='{region}', at={atDate:yyyy-MM-dd} {atTime}, X={xDays}");
+            LogToGui($"[SickByRegionAtDate] region='{region}', at={atDate:yyyy-MM-dd}, X={xDays}");
         }
         private void HandleListSickAllAtDate()
         {
             var atDate = dpSickAllDate.SelectedDate; // DateTime?
-            var atTime = tbSickAllTime.Text;         // string
             var xDays = tbSickAllXDays.Text;        // string
 
-            var persons = _view.ListSickAllAtDateFromGui(atDate, atTime, xDays);
-
+            var persons = _view.ListSickAllAtDateFromGui(atDate,xDays);
+            var viewRows = persons
+                .Select(t => new SickWithTest(t.Person, t.Test))
+                .ToList();
             ConfigurePersonsGridForPerson();
 
-            dgPersons.ItemsSource = persons;
-            tabLists.SelectedIndex = 0; // „Osoby“
+            dgPersonsPCR.ItemsSource = viewRows;
+            tabLists.SelectedItem = 4;
 
             txtStatus.Text = "Zobrazený zoznam chorých osôb k zadanému dátumu.";
-            LogToGui($"[SickAllAtDate] at={atDate:yyyy-MM-dd} {atTime}, X={xDays}, count={(persons as ICollection<Person>)?.Count}");
+            LogToGui($"[SickAllAtDate] at={atDate:yyyy-MM-dd}, X={xDays}, count={(persons as ICollection<Person>)?.Count}");
         }
         public record SickWithTest(Person Person, PCRTest Test);
         private void HandleListTopSickPerDistrictAtDate()
         {
             var atDate = dpTopSickPerDistrictDate.SelectedDate;
-            var atTime = tbTopSickPerDistrictTime.Text;
             var xDays = tbTopSickPerDistrictXDays.Text;
 
-            var rows = _view.ListTopSickPerDistrictAtDateFromGui(atDate, atTime, xDays);
+            var rows = _view.ListTopSickPerDistrictAtDateFromGui(atDate, xDays);
 
             // Ak controller vracia ValueTuple (Person,PCRTest), zabaľ ho:
             var viewRows = rows.Select(r => new SickWithTest(
@@ -639,19 +646,18 @@ namespace SemestralnaPracaAUS2
             )).ToList();
 
             ConfigurePersonsGridForSickWithTest();
-            dgPersons.ItemsSource = viewRows;
-            tabLists.SelectedIndex = 0;
+            dgPersonsPCR.ItemsSource = viewRows;
+            tabLists.SelectedIndex = 4;
 
             txtStatus.Text = "Zobrazené top choré osoby (1 z každého okresu) k zadanému dátumu.";
-            LogToGui($"[TopSickPerDistrict] at={atDate:yyyy-MM-dd} {atTime}, X={xDays}, count={viewRows.Count}");
+            LogToGui($"[TopSickPerDistrict] at={atDate:yyyy-MM-dd}, X={xDays}, count={viewRows.Count}");
         }
         private void HandleListDistrictsBySickCountAtDate()
         {
             var atDate = dpSickDistrictsDate.SelectedDate; // DateTime?
-            var atTime = tbSickDistrictsTime.Text;         // string
             var xDays = tbSickDistrictsXDays.Text;        // string
 
-            var rows = _view.ListDistrictsBySickCountAtDateFromGui(atDate, atTime, xDays);
+            var rows = _view.ListDistrictsBySickCountAtDateFromGui(atDate, xDays);
             dgDistricts.ItemsSource = null;
             dgDistricts.Items.Clear();
             dgDistricts.ItemsSource = rows
@@ -660,7 +666,7 @@ namespace SemestralnaPracaAUS2
             // Tab index uprav podľa poradia tabov: (0=Osoby, 1=PCR testy, 2=Kraje, 3=Okresy)
             tabLists.SelectedIndex = 3;
             txtStatus.Text = "Zobrazené okresy podľa počtu chorých osôb k dátumu.";
-            LogToGui($"[DistrictsBySickCount] at={atDate:yyyy-MM-dd} {atTime}, X={xDays}");
+            LogToGui($"[DistrictsBySickCount] at={atDate:yyyy-MM-dd}, X={xDays}");
         }
         private void HandleListAllByWorkplacePeriod()
         {

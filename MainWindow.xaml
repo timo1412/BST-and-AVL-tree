@@ -708,8 +708,6 @@ ToolTip="Unikátne číslo pacienta, ktorému bude test priradený"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <DatePicker x:Name="dpSickOkresSortedDate" Grid.Column="0"/>
-                        <TextBox   x:Name="tbSickOkresSortedTime" Grid.Column="1" Width="70"
-               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
                     </Grid>
 
                     <!-- Kód okresu -->
@@ -751,7 +749,6 @@ ToolTip="Unikátne číslo pacienta, ktorému bude test priradený"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <DatePicker x:Name="dpSickRegionDate" Grid.Column="0"/>
-                        <TextBox   x:Name="tbSickRegionTime" Grid.Column="1" Width="70" Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
                     </Grid>
 
                     <!-- Kód kraja -->
@@ -825,8 +822,6 @@ ToolTip="Unikátne číslo pacienta, ktorému bude test priradený"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <DatePicker x:Name="dpTopSickPerDistrictDate" Grid.Column="0"/>
-                        <TextBox   x:Name="tbTopSickPerDistrictTime" Grid.Column="1" Width="70"
-               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
                     </Grid>
 
                     <!-- X dní od pozitívneho testu -->
@@ -861,8 +856,6 @@ ToolTip="Unikátne číslo pacienta, ktorému bude test priradený"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <DatePicker x:Name="dpSickDistrictsDate" Grid.Column="0"/>
-                        <TextBox   x:Name="tbSickDistrictsTime" Grid.Column="1" Width="70"
-               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
                     </Grid>
 
                     <!-- X dní -->
@@ -897,8 +890,6 @@ ToolTip="Unikátne číslo pacienta, ktorému bude test priradený"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <DatePicker x:Name="dpSickRegionsDate" Grid.Column="0"/>
-                        <TextBox   x:Name="tbSickRegionsTime" Grid.Column="1" Width="70"
-               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
                     </Grid>
 
                     <!-- X dní -->
@@ -1328,6 +1319,68 @@ ToolTip="Unikátne číslo pacienta, ktorému bude test priradený"/>
                                 </Border>
                             </DataTemplate>
                         </DataGrid.RowDetailsTemplate>
+                    </DataGrid>
+                </TabItem>
+                <TabItem Header="Osoby + PCR testy">
+                    <DataGrid x:Name="dgPersonsPCR"
+              AutoGenerateColumns="False"
+              IsReadOnly="True"
+              CanUserAddRows="False"
+              EnableRowVirtualization="True"
+              EnableColumnVirtualization="True"
+              SelectionMode="Extended"
+              Margin="0"
+              AlternationCount="2">
+
+                        <DataGrid.Columns>
+                            <!-- OSOBA -->
+                            <DataGridTextColumn Header="ID pacienta"
+                                Binding="{Binding Person.UniqueNumber}"
+                                Width="140"/>
+
+                            <DataGridTextColumn Header="Meno"
+                                Binding="{Binding Person.FirstName}"
+                                Width="*"/>
+
+                            <DataGridTextColumn Header="Priezvisko"
+                                Binding="{Binding Person.LastName}"
+                                Width="*"/>
+
+                            <DataGridTextColumn Header="Dátum narodenia"
+                                Binding="{Binding Person.Birth, StringFormat=\{0:yyyy-MM-dd\}}"
+                                Width="140"/>
+
+                            <!-- PCR TEST -->
+                            <DataGridTextColumn Header="Kód PCR testu"
+                                Binding="{Binding Test.UniqueNumberPCR}"
+                                Width="120"/>
+
+                            <DataGridTextColumn Header="Dátum testu"
+                                Binding="{Binding Test.DateStartTest, StringFormat=\{0:yyyy-MM-dd HH:mm\}}"
+                                Width="170"/>
+
+                            <DataGridCheckBoxColumn Header="Pozitívny" Width="90" IsReadOnly="True">
+                                <DataGridCheckBoxColumn.Binding>
+                                    <Binding Path="Test.ResultOfTest" Mode="OneWay" />
+                                </DataGridCheckBoxColumn.Binding>
+                            </DataGridCheckBoxColumn>
+
+                            <DataGridTextColumn Header="Hodnota testu"
+                                Binding="{Binding Test.ValueOfTest}"
+                                Width="110"/>
+
+                            <DataGridTextColumn Header="Okres"
+                                Binding="{Binding Test.NumberOfDistrict}"
+                                Width="80"/>
+
+                            <DataGridTextColumn Header="Kraj"
+                                Binding="{Binding Test.NumberOfRegion}"
+                                Width="80"/>
+
+                            <DataGridTextColumn Header="Poznámka"
+                                Binding="{Binding Test.Note}"
+                                Width="200"/>
+                        </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
             </TabControl>

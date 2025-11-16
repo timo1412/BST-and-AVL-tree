@@ -261,34 +261,33 @@ namespace SemestralnaPracaAUS2.Architecture
                 return (false, ex.Message, null);
             }
         }
-        public (bool ok, string? error, IReadOnlyList<Person>? persons)
-            ListSickByRegionAtDate(DateTime at, int region, int xDays)
+        public (bool ok, string? error, IReadOnlyList<(Person Person, PCRTest Test)>? rows)ListSickByRegionAtDateWithTest(DateTime at, int region, int xDays)
         {
             try
             {
-                var persons = _model.ListSickByRegionAtDate(at, region, xDays);
-                return (true, null, persons);
+                var pairs = _model.ListSickByRegionAtDateWithTest(at, region, xDays);
+                return (true, null, pairs);
             }
             catch (Exception ex)
             {
                 return (false, ex.Message, null);
             }
         }
-        public (bool ok, string? error, IReadOnlyList<Person>? persons)
+
+        public (bool ok, string? error, IReadOnlyList<(Person Person, PCRTest Test)>? rows)
             ListSickAllAtDate(DateTime at, int xDays)
         {
             try
             {
-                var persons = _model.ListSickAllAtDate(at, xDays);
-                return (true, null, persons);
+                var rows = _model.ListSickAllAtDate(at, xDays);
+                return (true, null, rows);
             }
             catch (Exception ex)
             {
                 return (false, ex.Message, null);
             }
         }
-        public (bool ok, string? error, IReadOnlyList<(Person Person, PCRTest Test)>? pairs)
-            ListSickAllAtDateWithTest(DateTime at, int xDays)
+        public (bool ok, string? error, IReadOnlyList<(Person Person, PCRTest Test)>? pairs)ListSickAllAtDateWithTest(DateTime at, int xDays)
         {
             try
             {
