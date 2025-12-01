@@ -153,7 +153,7 @@ namespace SemestralnaPracaAUS2.Architecture
                 return (false, ex.Message, null);
             }
         }
-        public (bool ok, string? error, IReadOnlyList<Person>? persons)ListSickByDistrictAtDate(DateTime at,int district, int xDays)
+        public (bool ok, string? error, IReadOnlyList<(Person Person, PCRTest Test)>? persons)ListSickByDistrictAtDate(DateTime at,int district, int xDays)
         {
             try
             {

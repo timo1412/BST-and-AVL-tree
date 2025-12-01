@@ -323,7 +323,7 @@ namespace SemestralnaPracaAUS2.Architecture
                 .OrderBy(t => t.DateStartTest)
                 .ToList();
         }
-        public IReadOnlyList<Person> ListSickByDistrictAtDateFromGui(DateTime? atDate,string districtText,string xDaysText)
+        public IReadOnlyList<(Person Person, PCRTest Test)> ListSickByDistrictAtDateFromGui(DateTime? atDate,string districtText,string xDaysText)
         {
             // 1) Validácia a parsovanie vstupov
             if (atDate is null) throw new InvalidOperationException("Zvoľ dátum.");
@@ -335,12 +335,13 @@ namespace SemestralnaPracaAUS2.Architecture
             // X dní: povoľme 1..365 (prípadne uprav podľa zadania)
             int xDays = ParseIntInRange(xDaysText, 1, 365, "X dní musí byť v intervale 1..365.");
 
-            // 2) Delegácia na View → Model
-            var (ok, error, persons) = _controller.ListSickByDistrictAtDate(at, district, xDays);
-            if (!ok) throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
+            // 2) Delegácia na Controller → Model
+            var (ok, error, rows) = _controller.ListSickByDistrictAtDate(at, district, xDays);
+            if (!ok || rows is null)
+                throw new InvalidOperationException(error ?? "Vyhľadávanie zlyhalo.");
 
-            // 3) Výsledok pre tabuľku „Osoby“ (prípadné zoradenie ak chceš)
-            return persons ?? Array.Empty<Person>();
+            // 3) Výsledok – dvojice (Person, PCRTest) pre tabuľku „Osoby + PCR testy“
+            return rows;
         }
         public IReadOnlyList<(Person Person, PCRTest Test)> ListSickByDistrictAtDateSortedWithTestFromGui(DateTime? atDate,string districtText,string xDaysText)
         {

@@ -624,7 +624,6 @@ namespace SemestralnaPracaAUS2
                 .Select(t => new SickWithTest(t.Person, t.Test))
                 .ToList();
             ConfigurePersonsGridForPerson();
-
             dgPersonsPCR.ItemsSource = viewRows;
             tabLists.SelectedItem = 4;
 
@@ -683,13 +682,12 @@ namespace SemestralnaPracaAUS2
             );
 
             dgPcrs.ItemsSource = tests;
-            tabLists.SelectedIndex = 1; // prepni na „PCR testy“
+            tabLists.SelectedIndex = 1; 
             txtStatus.Text = "Zobrazené testy za obdobie na zadanom pracovisku.";
         }
         private void HandleListSickByDistrictAtDate()
         {
             var atDate = dpSickOkresDate.SelectedDate; // DateTime?
-            //var atTime = tbSickOkresTime.Text;         // string
             var district = tbSickOkresDistrict.Text;     // string
             var xDays = tbSickOkresXDays.Text;        // string
 
@@ -698,11 +696,15 @@ namespace SemestralnaPracaAUS2
                 district,
                 xDays
             );
-            var persons = rows.Select(t => t).ToList();
-            // zobraz osoby v tabuľke „Osoby“
-             ConfigurePersonsGridForPerson();
-            dgPersons.ItemsSource = persons;
-            tabLists.SelectedIndex = 0; // prepni na „Osoby“
+            // 2) zabaliť do SickWithTest kvôli bindowaniu v XAML (Person.* a Test.*)
+            var viewRows = rows
+                .Select(t => new SickWithTest(t.Person, t.Test))
+                .ToList();
+
+
+            dgPersonsPCR.ItemsSource = viewRows;
+
+            tabLists.SelectedItem = 4;
 
             txtStatus.Text = "Zobrazený zoznam chorých osôb v okrese k dátumu.";
         }

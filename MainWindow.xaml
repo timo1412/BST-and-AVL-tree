@@ -786,8 +786,6 @@ ToolTip="Unikátne číslo pacienta, ktorému bude test priradený"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <DatePicker x:Name="dpSickAllDate" Grid.Column="0"/>
-                        <TextBox   x:Name="tbSickAllTime" Grid.Column="1" Width="70"
-               Margin="8,0,0,0" ToolTip="Čas HH:mm (napr. 00:00)"/>
                     </Grid>
 
                     <!-- X dní -->
@@ -1035,7 +1033,6 @@ ToolTip="Unikátne číslo pacienta, ktorému bude test priradený"/>
                         <RowDefinition Height="Auto"/>
                         <!-- titul -->
                         <RowDefinition Height="Auto"/>
-                        <!-- ID/rodné číslo -->
                         <RowDefinition Height="Auto"/>
                         <!-- upozornenie -->
                     </Grid.RowDefinitions>
@@ -1048,9 +1045,9 @@ ToolTip="Unikátne číslo pacienta, ktorému bude test priradený"/>
              Text="Vymazanie osoby zo systému"
              FontWeight="SemiBold" Margin="0,0,0,8"/>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="ID/rodné číslo pacienta:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Kod pacienta:" VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <TextBox   Grid.Row="1" Grid.Column="1" x:Name="tbDeletePersonId"
-             ToolTip="Zadaj unikátne číslo (alebo rodné číslo) pacienta"/>
+             ToolTip="Zadaj unikátne číslo pacienta"/>
 
                     <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Foreground="#B00020" Opacity=".9" Margin="0,6,0,0"
              Text="Pozor: operácia je trvalá a nevratná. Odstránia sa aj všetky jeho PCR testy."/>

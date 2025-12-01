@@ -71,6 +71,7 @@ namespace SemestralnaPracaAUS2.Architecture
             {
                 _posByDistrictDate.Add(PcrPosByDistrictDate.Of(t));
                 _posByRegionDate.Add(PcrPosByRegionDate.Of(t));
+                _posByDate.Add(PcrPosByDate.Of(t));
             }
         }
         public PCRTest UpdatePcr(int code, int region, int district, bool result, double value, string note)
@@ -472,35 +473,54 @@ namespace SemestralnaPracaAUS2.Architecture
             results.Sort((a, b) => a.DateStartTest.CompareTo(b.DateStartTest));
             return results;
         }
-        public IReadOnlyList<Person> ListSickByDistrictAtDate(DateTime at, int district, int xDays)
+        public IReadOnlyList<(Person Person, PCRTest Test)> ListSickByDistrictAtDate(DateTime at, int district, int xDays)
         {
             if (district <= 0) throw new ArgumentOutOfRangeException(nameof(district));
             if (xDays <= 0) throw new ArgumentOutOfRangeException(nameof(xDays));
 
-            var atDate = at.Date;                         
-            var from = atDate.AddDays(-(xDays - 1)); 
+            var atDate = at.Date;
+            var fromDate = atDate.AddDays(-(xDays - 1));  
 
-            var lo = SickByDistrictDate.Low(district, from);
-            var hi = SickByDistrictDate.High(district, atDate);
+            var rangeFrom = fromDate;
+            var rangeTo = atDate.AddDays(1).AddTicks(-1);
 
-            var persons = new List<Person>();
+            var lo = PcrPosByDistrictDate.Low(district, rangeFrom);
+            var hi = PcrPosByDistrictDate.High(district, rangeTo);
 
-            foreach (var wrap in _idxSickByDistrictDate.Range(lo, hi))
+            var byPerson = new Dictionary<string, (Person Person, PCRTest Test)>(StringComparer.Ordinal);
+
+            foreach (var wrap in _posByDistrictDate.Range(lo, hi))
             {
-                if (wrap.Value != null)
-                    persons.Add(wrap.Value);
+                var t = wrap.Value; 
+                if (t is null) continue;
+
+                var testDate = t.DateStartTest.Date;
+                var personId = t.UniqueNumberPerson;
+                if (string.IsNullOrEmpty(personId)) continue;
+
+                if (!byPerson.TryGetValue(personId, out var curr))
+                {
+                    // prvý pozitívny test v okne pre túto osobu – dotiahneme Person
+                    if (_idxPersonById.Find(PersonByUniqueNumber.FromKey(personId), out var pWrap) &&
+                        pWrap.Value != null)
+                    {
+                        byPerson[personId] = (pWrap.Value, t);
+                    }
+                }
+                else
+                {
+                    var currDate = curr.Test.DateStartTest.Date;
+                    if (testDate > currDate)
+                    {
+                        byPerson[personId] = (curr.Person, t);
+                    }
+                }
             }
 
-            persons.Sort((a, b) =>
-            {
-                int c = string.Compare(a.LastName, b.LastName, StringComparison.Ordinal);
-                if (c != 0) return c;
-                c = string.Compare(a.FirstName, b.FirstName, StringComparison.Ordinal);
-                if (c != 0) return c;
-                return string.Compare(a.UniqueNumber, b.UniqueNumber, StringComparison.Ordinal);
-            });
+            // prevedieme dictionary na zoznam a zoradíme osoby ako predtým (podľa mena)
+            var pairs = byPerson.Values.ToList();
 
-            return persons;
+            return pairs;
         }
         public IReadOnlyList<(Person Person, PCRTest Test)> ListSickByDistrictAtDateWithTest(
             DateTime at,
@@ -621,11 +641,11 @@ namespace SemestralnaPracaAUS2.Architecture
             ok &= _idxByWorkplaceDate.Delete(PcrByWorkplaceDate.Of(test));
             if (test.ResultOfTest) 
             {
+                ok &= _posByDate.Delete(PcrPosByDate.Of(test));
                 ok &= _posByDistrictDate.Delete(PcrPosByDistrictDate.Of(test));
                 ok &= _posByRegionDate.Delete(PcrPosByRegionDate.Of(test));
             }
-                ok &= _posByDistrictDate.Delete(PcrPosByDistrictDate.Of(test));
-            _posByRegionDate.Delete(PcrPosByRegionDate.Of(test));
+            
             if (!ok)
                 throw new InvalidOperationException("Nepodarilo sa odstrániť test zo všetkých indexov (nekonzistentný stav).");
 
@@ -836,12 +856,11 @@ namespace SemestralnaPracaAUS2.Architecture
             if (xDays <= 0) throw new ArgumentOutOfRangeException(nameof(xDays));
 
             var atDate = at.Date;
-            var fromDate = atDate.AddDays(-(xDays - 1));  // X dní dozadu vrátane atDate
+            var fromDate = atDate.AddDays(-(xDays - 1));  
 
             var rangeFrom = fromDate;
             var rangeTo = atDate.AddDays(1).AddTicks(-1);
 
-            // index IBA s pozitívnymi testami podľa dátumu
             var lo = PcrPosByDate.Low(rangeFrom);
             var hi = PcrPosByDate.High(rangeTo);
 
